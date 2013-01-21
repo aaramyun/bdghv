@@ -1,0 +1,53 @@
+1) If you don't have git, install git with msysGit (on windows)
+Download http://msysgit.googlecode.com/files/Git-1.5.5-preview20080413.exe
+
+2) Create an account on www.github.com. This is free.
+
+2') On your github account, click fork for the bdghv repository.
+   This creates your own bdghv repository on github.
+
+3) Create an ssh key. On your git bash, type:
+  $ ssh-keygen -C "your@email.com" -t rsa
+
+4) Paste the public key in github (either in your github account, or in the "deploys keys" section for the bdghv repository).
+  Use Firefox since Internet Explorer is not supported by Github.
+
+5) On your git bash, type:
+  $ git clone git@github.com:paillier/bdghv.git bdghv
+
+where you replace paillier by your login name in github.
+
+  Note that this may not work behind a corporate firewall (but there are some ways around, see guides on github).
+
+  To make it work behind a firewall, you can write:
+  $ git clone https://github.com/paillier/bdghv.git bdghv
+
+where you replace paillier by your login name in github.
+
+  This creates on your local disk a directory called bdghv which contains the files and the complete history of the project.
+
+  You are going to work in this local repository.  This repository is independent from the repository stored on github.
+
+6) When you have done some work, you can commit your result in this repository, offline. 
+   For example after having modified the batchdghv_proce.tex, to commit the change:
+
+   $ cd bdghv
+   $ git commit -a -m "some change" 
+
+   The change is then registered in your local repository (not on github).
+
+7) While you were working on your version, maybe a new version is available on another repository (for example the one from user coron on Github).
+   To get the updated version, write:
+   $ git remote add coron git@github.com:coron/bdghv.git
+   $ git pull coron master
+
+   (the git remote instruction has to be done only once; it enables to write coron instead of git@github.com:coron/bdghv.git; you can use https instead as above)
+
+   The git pull command tries to merge the version from the main tree with your version. If conflicts appear, solve the conflicts and commit the result.
+
+8) When you are happy with your commits, you can push your commits from your local repository to your github repository, 
+so that people can then merge with your commits.
+
+   $ git push origin master
+  
+9) Go back to step 6.
