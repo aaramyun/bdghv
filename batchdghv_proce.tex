@@ -177,10 +177,10 @@ three main families of fully homomorphic encryption schemes are known:
 
 \item Brakerski and Vaikuntanathan's scheme based on the Learning with
   Errors (LWE) and Ring Learning with Errors (RLWE)
-  problems~\cite{BV2011a,BV2011b}, and follow-up works (\eg the scale-free variant of Brakerski~\cite{Bra2012} and the NTRU-variant~\cite{LTV2012}). An implementation is described in
-  \cite{GHS2012c} with an efficient (given the current state of knowledge)
+  problems~\cite{BV2011a,BV2011b}, and follow-up works (\eg the scale-free variant of Brakerski~\cite{Bra2012} and the NTRU-variant~\cite{LTV2012}). An implementation is described in~\cite{GHS2012c} with an 
+  efficient (given the current state of knowledge)
   homomorphic evaluation of the full AES encryption circuit.  The
-  authors use the \emph{batch} RLWE scheme proposed in \cite{BGV2012,GHS2012a},
+  authors use the \emph{batch} RLWE-based scheme proposed in~\cite{BGV2012,GHS2012a},
   that allows one to
  encrypt vectors of plaintexts in a single ciphertext and to
  perform any permutation on the underlying plaintext vector while
@@ -190,7 +190,7 @@ three main families of fully homomorphic encryption schemes are known:
 \subsubsection{Our Contributions.} 
 
 In this paper we focus on the DGHV scheme. Our goal is to extend DGHV to
-support the same batching capability as in  RLWE based
+support the same batching capability as in  RLWE-based
 schemes~\cite{BV2011a,BV2011b}, and to homomorphically evaluate a full AES
 circuit with roughly the same level of efficiency as~\cite{GHS2012c}, in
 order to obtain an implementation of a FHE scheme with similar features
@@ -265,14 +265,13 @@ with $\geq72$ bits of security, our implementation  homomorphically
 encrypts up to  $531$ AES ciphertexts in parallel in an amortized $12$
 minutes per AES ciphertext on a desktop computer. This is comparable to
 the timings presented by Gentry~\etal at Crypto 2012 for their
-implementation of an RLWE-based scheme \cite{GHS2012c}.\footnote{
+implementation of an RLWE-based scheme~\cite{GHS2012c}.\footnote{
 Notice that our implementation uses bootstrapping whereas the implementation
 of~\cite{GHS2012c} just used a somewhat homomorphic encryption scheme which
 could cope with a huge depth. }
 
 While our batch variant of DGHV does not provide additional features nor
-significantly improved efficiency over the RLWE scheme of
-\cite{GHS2012a}, we believe it is interesting to obtain FHE schemes with
+significantly improved efficiency over the RLWE-based scheme of~\cite{GHS2012a}, we believe it is interesting to obtain FHE schemes with
 similar properties but based on different techniques and assumptions.  
 
 
@@ -335,7 +334,7 @@ c'$ is an encryption of $m \cdot m'$ with noise bit-length $\simeq
 the scheme roughly allows $\eta/\rho'$ successive multiplications on ciphertexts.
 
 The scheme is semantically secure under the Approximate-GCD assumption
-(see \cite{vDGHV2010}):
+(see~\cite{vDGHV2010}):
 
 \begin{definition}[Approximate GCD]
 \label{def:approxGCD}
@@ -466,7 +465,7 @@ random $\eta$-bit primes $p_j$, $0\leq j<\ell$, and denote $\pi$
 their product. Let us define the error-free public key element
 $x_0=q_0\cdot\pi$, where $q_0 \leftarrow \Z \cap [0,2^{\gamma}/\pi)$
   is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
-    not contain prime factors smaller than $b$. As in \cite{CMNT2011} one can
+    not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
     generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
 
   Generate the following integers $x_i$, $x'_i$ and $\varPi_i$ with a quotient by $\pi$ uniformly
@@ -515,7 +514,7 @@ set under the following constraints:
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny $\bullet$}
 \itemsep.4em
-\item $\rho \geq 2\lambda$ to avoid brute force attack on the noise \cite{CN2012},
+\item $\rho \geq 2\lambda$ to avoid brute force attack on the noise~\cite{CN2012},
 
 \item $\eta \geq \alpha'+\rho'+1+\log_2(\ell)$ for correct decryption,
 
@@ -543,12 +542,12 @@ set under the following constraints:
 
 To satisfy the above constraints one can take $\rho=2\lambda$,
 $\eta=\Ot{\lambda^2}$, $\gamma=\Ot{\lambda^5}$,
-$\alpha=\Ot{\lambda^2}$, $\tau=\Ot{\lambda^3}$ as in \cite{CNT2012},
+$\alpha=\Ot{\lambda^2}$, $\tau=\Ot{\lambda^3}$ as in~\cite{CNT2012},
 with $\rho'=\Ot{\lambda}$, $\alpha'=\Ot{\lambda^2}$ and $\ell=\Ot{\lambda^2}$. 
 The main difference with the original DGHV scheme is that the
 ciphertext expansion ratio becomes $\gamma/\ell=\Ot{\lambda^3}$
 instead of $\gamma=\Ot{\lambda^5}$. However the public key size (using
-the compressed public key technique from \cite{CNT2012}) becomes 
+the compressed public key technique from~\cite{CNT2012}) becomes 
 $\Ot{\lambda^7}$ instead of $\Ot{\lambda^5}$. We refer to Section 
 \ref{subsec:practical-implementation} for concrete parameters and
 timings.
@@ -570,7 +569,7 @@ In this section we prove that our batch DGHV scheme is semantically
 secure under a new assumption, which we call the
 error-free $\ell$-decisional-approximate-GCD assumption. We then show that this
 new assumption is implied by the error-free Approximate-GCD assumption
-already considered in \cite{CMNT2011,CNT2012}.
+already considered in~\cite{CMNT2011,CNT2012}.
 
 Given integers $q_0$ and $p_0,\ldots,p_{\ell-1}$, we define the following oracle
 ${\cal O}_{q_0,(p_i)}(\vec{v})$ which, given as input a vector $\vec{v} \in {\mathbb
@@ -611,7 +610,7 @@ error-free $\ell$-decisional-approximate-GCD assumption.
 \end{theorem}
 
 \begin{proof}
-We provide a sketch of the proof. See the proof in the full version \cite{CLT2013a}.
+We provide a sketch of the proof. See the proof in the full version~\cite{CLT2013a}.
 \end{proof}
 
 
@@ -619,9 +618,9 @@ We provide a sketch of the proof. See the proof in the full version \cite{CLT201
 
 Ideally we would like to base the security of the new batch DGHV scheme on
 the same assumption as the original scheme, \ie the
-Approximate-GCD assumption from Definition \ref{def:approxGCD}.
+Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
 However we can only show its security under the
-(stronger) error-free Approximate-GCD assumption already considered in \cite{CMNT2011,CNT2012}.
+(stronger) error-free Approximate-GCD assumption already considered in~\cite{CMNT2011,CNT2012}.
  For two specific
 integers $p$ and $q_0$, we use the following distribution over
 $\gamma$-bit integers:  
@@ -636,7 +635,7 @@ where $q_0$ is a random integer in $[0,
   2^{\gamma}/p)$, and polynomially many samples from $\mathcal
   D_\rho(p,q_0)$, output $p$. 
 \end{definition} 
-We prove the following Lemma in Appendix \ref{p:redsec}.
+We prove the following Lemma in Appendix~\ref{p:redsec}.
 
 \begin{lemma}
 \label{l:redsec}
@@ -723,7 +722,7 @@ s_{j,i} \cdot z_{i}\right\rceil\right]_2 \oplus
 \end{description}
 This completes the description of the scheme. 
 We
-use $n=\lceil \log_2 (\theta+1) \rceil$ as in \cite{CMNT2011}; the
+use $n=\lceil \log_2 (\theta+1) \rceil$ as in~\cite{CMNT2011}; the
 proof of the following Lemma is  the same as in~\cite[Appendix~E]{CMNT2011}.
 
 \begin{lemma}The BDGHV encryption scheme is correct for the set $C(\mathcal {P_E})$ of
@@ -790,8 +789,7 @@ From what precedes, we can implement homomorphic SIMD-type operations on
 our packed ciphertexts, where the $\Add$ and $\Mult$ operations are
 applied to $\ell$ different input bits at once. However, a desired
 feature when dealing with packed ciphertexts is the ability to move
-values between plaintext slots with a $\Permute$ operation. As opposed to
-\cite{GHS2012a} we cannot rely on an underlying algebraic structure.
+values between plaintext slots with a $\Permute$ operation. As opposed to~\cite{GHS2012a} we cannot rely on an underlying algebraic structure.
 Instead we show how to perform  such $\Permute$ at ciphertext refresh time.
 This feature is therefore supported at no extra cost assuming a
 ciphertext refresh operation has to be carried out anyway (\ie after each
@@ -1134,20 +1132,19 @@ $\Mult$ and $2448$ $\Recrypt$.
 \end{table}
 
 \paragraph{Implementation Results.} We implemented both variants
-using the concrete parameters from Table \ref{t:concparams}; our
+using the concrete parameters from Table~\ref{t:concparams}; our
 results are summarized in 
 Table~\ref{table:aes-results}. The 
 relative time is the total time of AES evaluation divided  by the
 number of encryptions processed in parallel. Notice that the \swbs variant
 yields  better relative times. 
 
-Our timings are comparable to~\cite{GHS2012c} for the RLWE
-based scheme, where a relative time of $5$ minutes per block is
+Our timings are comparable to~\cite{GHS2012c} for the RLWE-based scheme, where a relative time of $5$ minutes per block is
 reported; the authors used a $24$-core server with 256GB of RAM, while
 our program runs on a more modest desktop computer with 4 cores and
 32GB of RAM (the whole public key fits in RAM).
 We claim a slightly lower security level, however: $72$ bits versus $80$
-bits for the implementation from \cite{GHS2012c}.
+bits for the implementation from~\cite{GHS2012c}.
 
 %
 \bibliographystyle{plain}
