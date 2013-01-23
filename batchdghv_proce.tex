@@ -131,7 +131,7 @@ Ring-LWE based fully homomorphic encryption scheme.
 Fully homomorphic encryption allows a worker to perform implicit
 additions and multiplications on plaintext values while exclusively
 manipulating encrypted data. The first construction of a fully
-homomorphic scheme based on ideal lattices was described by Gentry
+homomorphic scheme (based on ideal lattices) was described by Gentry
 in~\cite{GenPhD}, and proceeds in several steps. First, one constructs a
 \emph{somewhat homomorphic} encryption scheme, which only supports a limited
 number of multiplications: ciphertexts contain some noise that becomes
@@ -184,13 +184,13 @@ three main families of fully homomorphic encryption schemes are known:
   that allows one to
  encrypt vectors of plaintexts in a single ciphertext and to
  perform any permutation on the underlying plaintext vector while
- manipulating only the ciphertext. 
+ manipulating only the ciphertext~\cite{SV2011}. 
 \end{enumerate}
 
 \subsubsection{Our Contributions.} 
 
 In this paper we focus on the DGHV scheme. Our goal is to extend DGHV to
-support the same batching capability as in  RLWE-based
+support the same batching capability~\cite{SV2011} as in RLWE-based
 schemes~\cite{BV2011a,BV2011b}, and to homomorphically evaluate a full AES
 circuit with roughly the same level of efficiency as~\cite{GHS2012c}, in
 order to obtain an implementation of a FHE scheme with similar features
@@ -256,7 +256,10 @@ structure to perform rotations over plaintext bits (clearly, the
 automorphisms of $\Z$ do not provide any useful action on ciphertexts).
 Instead we show how to perform arbitrary permutations on the plaintext
 vector during the ciphertext refresh operation at no additional cost (but with
-a slight increase of the public key size). 
+a slight increase of the public key size). Notice also that the $\Recrypt$
+operation is done in parallel over the 
+$\ell$ slots, with the same complexity as a single $\Recrypt$
+operation in the original scheme.
 
 Finally, we describe an implementation of our batch DGHV scheme of Section~\ref{sec:batch-error-free}, with
 concrete parameters. We use our batch DGHV scheme to homomorphically
@@ -740,7 +743,11 @@ all $0 \leq j < \ell$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 As in~\cite{vDGHV2010}, we get that the BDGHV scheme is
-bootstrappable. In the original DGHV scheme, the decryption equation
+bootstrappable. Moreover, the $\Recrypt$ procedures works naturally in \emph{parallel} over the plaintext bits; other FHE schemes~\cite{SV2011,GHS2012a} when using
+a parallel $\Recrypt$ procedure have much greater complications than for this
+scheme.
+
+In the original DGHV scheme, the decryption equation
 was:
 \begin{equation}
 \label{eq:msz}
@@ -770,7 +777,7 @@ operation is done in parallel over the
 $\ell$ slots, with the same complexity as a single $\Recrypt$
 operation in the original scheme.
 
-From Gentry's theorem, we obtain homomorphic encryption schemes for
+From Gentry's theorem, we obtain a homomorphic encryption scheme for
 circuits of any depth. The proof of the following theorem is identical
 to the proof of Theorem~5.1
 in~\cite{CMNT2011}.
@@ -789,7 +796,7 @@ From what precedes, we can implement homomorphic SIMD-type operations on
 our packed ciphertexts, where the $\Add$ and $\Mult$ operations are
 applied to $\ell$ different input bits at once. However, a desired
 feature when dealing with packed ciphertexts is the ability to move
-values between plaintext slots with a $\Permute$ operation. As opposed to~\cite{GHS2012a} we cannot rely on an underlying algebraic structure.
+values between plaintext slots with a public $\Permute$ operation. As opposed to~\cite{GHS2012a} we cannot rely on an underlying algebraic structure.
 Instead we show how to perform  such $\Permute$ at ciphertext refresh time.
 This feature is therefore supported at no extra cost assuming a
 ciphertext refresh operation has to be carried out anyway (\ie after each
@@ -902,7 +909,7 @@ implementation with
 fully-homomorphic encryption scheme~\cite{BV2011a,BV2011b,GHS2012a} is
 described in~\cite{GHS2012c}. 
 As mentioned 
-in~\cite{GHS2012c,NLV2011}, such an implementation can be used to
+in~\cite{SV2011,NLV2011,GHS2012c}, such an implementation can be used to
 optimize the communication cost in cloud-based
 applications. Indeed, since the ciphertext expansion ratio in most
 fully-homomorphic encryption schemes is huge, data can rather be sent
@@ -1051,14 +1058,10 @@ The $\AddRoundKey$ stage performs a XOR between the AES state and the
 current round key. This operation only consists of $8$ $\Add$
 operations.  
 To minimize the
-number of $\Recrypt$ during the $\SubBytes$ stage, we used the $115$ gates circuit of
-Boyar and Peralta~\cite{BP2010} to compute the Sbox. 
-It is shown in~\cite{LP2013} that this circuits only needs $17$
-$\Recrypt$ operations
-on $9$ of
+number of $\Recrypt$, we perform the $\Recrypt$ operation only on $9$ of
 the temporary variables and on the $8$ outputs. In total, this stage
 costs $83$ $\Add$, $32$ $\Mult$ and $17$
-$\Recrypt$.
+$\Recrypt$. In order to compute the \emph{minimal} number of $\Recrypt$ needed to homomorphically evaluate a given circuit, we refer you to~\cite{LP2013}.
 
 The $\ShiftRows$ stage consists in performing a permutation of the
 state. For this we add the $\sigma^\zeta_i$'s of the associated
