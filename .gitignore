@@ -7,3 +7,4 @@
 latexmkrc
 llncs.cls
 *.fdb_latexmk
+*.synctex.gz
