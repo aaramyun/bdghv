@@ -350,11 +350,41 @@ The scheme is semantically secure under the Approximate-GCD assumption
 \section{Batch DGHV Scheme Based on a new Decisional Assumption}\label{sec:batch-decisional}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{itemize}
-  \item DGHV without additional noise + security proof with new decisional problem
-  \item Extension to batch
+%\begin{itemize}
+%  \item DGHV without additional noise + security proof with new decisional problem
+%  \item Extension to batch
+%
+%\end{itemize}
 
-\end{itemize}
+We describe our first extension of the DGHV scheme for the batch setting.  We extend the DGHV scheme
+by packing $\ell$ plaintexts $m_0$, \dots, $m_{\ell-1}$ into a single ciphertext, using Chinese Remainder
+Theorem.  Moreover, for somewhat homomorphic encryption, this allows us to encrypt not only bits
+but elements from rings of form $\Z_Q$.
+
+Therefore, we encrypt $(m_0, \dots, m_{\ell-1})\in\Z_{Q_0}\times\cdots\times\Z_{Q_{\ell-1}}$ into a ciphertext
+of following form:
+\[
+c=\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, Q_0 r_0+m_0,\ldots,Q_{\ell-1}r_{\ell-1}+m_{\ell-1}),
+\]
+where $q$ is uniform random in modulo $q_0$ and $r_i$ are small noises.  Decryption can be done by
+\[
+m_i=[c\bmod{p_i}]_{Q_i}.
+\]
+Homomorphic addition and multiplication can be done by corresponding arithmetic operations on ciphertexts.
+
+This scheme can be considered as encryption of vectors $(m_0, \dots, m_{\ell-1})$, supporting parallel, componentwise
+addition and multiplications.  Or, if we choose $Q_i$ to be mutually prime, then using the isomorphism 
+$\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as somewhat homomorphic encryption supporting arithmetic operations
+on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
+
+In order to allow public-key encryption, we provide integers $x'_i$ and $x_j$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r_{j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{j}$ for all $i$, $j$.  Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
+\[
+c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{j\in S} x_j\right]_{x_0}.
+\]
+
+As explained in the Introduction, the additional, larger noise $2r$ from the DGHV scheme is not used in this version.
+This simplifies the construction, with the tradeoff of a new decisional assumption and larger security loss.  
+In Section~\ref{sec:batch-error-free}, we present another version which handles this issue differently.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
