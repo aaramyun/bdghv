@@ -8,3 +8,4 @@ latexmkrc
 llncs.cls
 *.fdb_latexmk
 *.synctex.gz
+.DS_Store
