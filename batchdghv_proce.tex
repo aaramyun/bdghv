@@ -56,6 +56,7 @@
 \newcommand*\MixColumns{\ensuremath{\mathsf{MixColumns}}}
 \newcommand*\GF{\ensuremath{\mathrm{GF}}}
 
+\newcommand*\D{\ensuremath{\mathcal D}}
 \renewcommand*\O{\ensuremath{\mathcal O}}
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
   \noindent\keywordname\enspace\ignorespaces#1.}
@@ -458,22 +459,43 @@ The above scheme is correct for $\mathcal{C_E}$.
 \subsection{Semantic Security}\label{reduce_acd}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Here we show the security of the \CDGHV\ scheme.  In order to prove this, we introduce a new assumption called $\ell$-$\mathbf{DACD}_Q$, and give a security proof based on this assumption.  In fact, this rather complicated assumption is given only as an intermediate step for the proof, and in Section~\ref{decisional_assumption}, we prove this assumption from a simpler decisional assumption.
+
+Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \dots, Q_{\ell-1})$ of length $\ell$ and an integer $q_0$, let us define the distribution $\D_\rho(\vec{p}; \vec{Q}; q_0)$ as follows.  The output of the distribution is
+\[
+x=\crt_{q_0,p_1,\dots,p_k}(q,Q_0r_0,\dots,Q_{\ell-1}r_{\ell-1}),
+\]
+where $q\gets\Z\cap[0,q_0)$ and $r_i\gets\Z\cap(-2^\rho,2^\rho)$ for $i=0,\dots,\ell-1$
+
+\begin{definition}[$\ell$-Decisional Approximate $\mathbf{GCD}_Q$ Problem: $\ell$-$\mathbf{DACD}_Q$] \\
+The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ problem is: for $\eta$-bit distinct primes $p_0,\dots,p_{\ell-1}$ and $\mu$-bit integers $Q_0,\dots,Q_{\ell-1}$, given a $\gamma$-bit integer  $x_0:=q_0p_0\cdots p_{\ell-1}$, with $\gcd(x_0,Q_i)=1$ for $i=0,\dots,\ell-1$, and  %$q_0=\Big\lfloor{2^\gamma\over\prod_{i=1}^kp_i}\Big\rfloor$ , 
+polynomially many samples from $\D:=\D_{\rho}(\vec{p};\vec{Q};q_0)$ and a set $X$ consisting of $\ell$ integers $x'_i=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q_i,Q_0r'_{i,0}+\delta_{i,0},\dots,Q_{\ell-1}r'_{i,\ell-1}+\delta_{i,\ell-1})$ where $q_i$, $r'_{i,j}$ are chosen by
+$q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\leftarrow\D$ and $r\leftarrow\Z\cap[0,x_0)$.
+\end{definition}
+
+\begin{theorem}
+The \CDGHV\ scheme is semantically secure under the $l$-decisional approximate $\mathrm{GCD}_Q$ assumption.
+\end{theorem}
+\begin{proof}
+Soon to be filled.
+\end{proof}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Hardness Assumption}
+\subsection{Hardness Assumption}\label{decisional_assumption}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The semantic security of our scheme is based on a new decisional assumption of approximate GCD problem. 
 %In fact, decisional approximate GCD is considered by Coron et al[] for the first time.
  For two specific
 integers $p$ and $q_0$, we use the following distribution over
 $\gamma$-bit integers:  
-\[ \mathcal D_\rho(p,q_0) = \left\{ \Choose q\leftarrow [0, q_0),
+\[ \D_\rho(p,q_0) = \left\{ \Choose q\leftarrow [0, q_0),
   r\leftarrow \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
   \right\}. \] 
 
 \begin{definition}[Decisional Approximate GCD Problem: DACD]
-The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\mathcal D_{\rho}(p,q_0)$,
+The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\D_{\rho}(p,q_0)$,
 %and a set $S:=\{x_i \mod x_0 \big|$ for polynomially many samples $x_i\leftarrow \D_{\gamma,\rho}(p)\}$, 
-determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\leftarrow\mathcal D_{\rho}(p,q_0)$ and $r\leftarrow\Z\cap[0,x_0)$.
+determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\leftarrow\D_{\rho}(p,q_0)$ and $r\leftarrow\Z\cap[0,x_0)$.
 \end{definition}
 
 We prove the following Lemma in Appendix~\ref{p:red sec}.
