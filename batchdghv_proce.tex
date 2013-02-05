@@ -47,7 +47,7 @@
 \newcommand*{\sk}{\ensuremath{\mathsf{sk}}}
 \newcommand*{\DGHV}{\ensuremath{\mathsf{DGHV}}}
 \newcommand*{\BDGHV}{\ensuremath{\mathsf{BDGHV}}}
-\newcommand*{\CDGHV}{\ensuremath{\mathsf{GDGHV}}}
+\newcommand*{\CDGHV}{\ensuremath{\mathsf{BDGHV}}}
 \newcommand*{\FHE}{\ensuremath{\mathsf{FHE}}}
 
 \newcommand*\AddRoundKey{\ensuremath{\mathsf{AddRoundKey}}}
@@ -392,13 +392,13 @@ In Section~\ref{sec:batch-error-free}, we present another version which handles 
 \subsection{Description}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{description}\label{CDGHV}
-\item[$\CDGHV.\KeyGen(1^\lambda,\mu,\ell)$.] Choose $\eta$-bit distinct primes $p_j$, $0\leq j<\ell$, and denote $\pi$
+\item[$\CDGHV.\KeyGen(1^\lambda,(Q_j)_{0\leq j <\ell})$.] Choose $\eta$-bit distinct primes $p_j$, $0\leq j<\ell$, and denote $\pi$
 their product. Let us define the error-free public key element
-$x_0=q_0\cdot\pi$, where $q_0 \leftarrow \Z \cap [0,2^{\gamma}/\pi)$
+$x_0=q_0\cdot\pi$, where $q_0 \gets \Z \cap [0,2^{\gamma}/\pi)$
   is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
     not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
     generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
-  Choose $\mu$-bit integers $Q_j$ with $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$. 
+  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$. 
   
   Choose the following integers $x_i$ and $x'_i$ with a quotient by $\pi$ uniformly
   and independently distributed in $\Z\cap [0, q_0)$, and with the
@@ -406,10 +406,10 @@ $x_0=q_0\cdot\pi$, where $q_0 \leftarrow \Z \cap [0,2^{\gamma}/\pi)$
 $$
 \begin{array}{lll}
 1 \leq i \leq \tau, & \qquad x_i\bmod p_j = Q_j r_{i,j},& \qquad r_{i,j}
-\leftarrow\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+\gets\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
 
 0\leq i\leq \ell-1, & \qquad x'_i\bmod p_j = Q_jr'_{i,j}+\delta_{i,j}, &
-\qquad r'_{i,j}\leftarrow\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+\qquad r'_{i,j}\gets\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
 
 \end{array}
 $$
@@ -423,7 +423,7 @@ c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i +
 	\sum_{i=1}^\tau 
 b_i\cdot x_i\right]_{x_0}.
 \end{equation}
-\item[$\CDGHV.\Decrypt(\sk, c)$.] Output $\vec{m}=(m_0,\ldots,m_{\ell-1})$ where $m_j \leftarrow [c]_{p_j} \bmod Q_j$.
+\item[$\CDGHV.\Decrypt(\sk, c)$.] Output $\vec{m}=(m_0,\ldots,m_{\ell-1})$ where $m_j \gets [c]_{p_j} \bmod Q_j$.
 \\\vspace{-0.25cm}
 \item[$\CDGHV.\Add(\pk, c_1, c_2)$.] Output $c_1+c_2 \bmod x_0$
 \\\vspace{-0.25cm}
@@ -434,7 +434,7 @@ b_i\cdot x_i\right]_{x_0}.
 \subsection{Parameters and Correctness}\label{parameter}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Roughly speaking, $\ell$ determines the size of the message space.
-The parameter $\mu$ can be an integer from $2$ to $\eta/8$ depending on the multiplicative depth of the scheme. The details of analysis are given in Appendix~\ref{app:correctness}.
+The binary length of $Q_j$ can be an integer from $2$ to $\eta/8$ depending on the multiplicative depth of the scheme. The details of analysis are given in Appendix~\ref{app:correctness}.
 The parameters should satisfy the following constraints: 
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny $\bullet$}
@@ -470,7 +470,7 @@ where $q\gets\Z\cap[0,q_0)$ and $r_i\gets\Z\cap(-2^\rho,2^\rho)$ for $i=0,\dots,
 \begin{definition}[$\ell$-Decisional Approximate $\mathbf{GCD}_Q$ Problem: $\ell$-$\mathbf{DACD}_Q$] \\
 The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ problem is: for $\eta$-bit distinct primes $p_0,\dots,p_{\ell-1}$ and $\mu$-bit integers $Q_0,\dots,Q_{\ell-1}$, given a $\gamma$-bit integer  $x_0:=q_0p_0\cdots p_{\ell-1}$, with $\gcd(x_0,Q_i)=1$ for $i=0,\dots,\ell-1$, and  %$q_0=\Big\lfloor{2^\gamma\over\prod_{i=1}^kp_i}\Big\rfloor$ , 
 polynomially many samples from $\D:=\D_{\rho}(\vec{p};\vec{Q};q_0)$ and a set $X$ consisting of $\ell$ integers $x'_i=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q_i,Q_0r'_{i,0}+\delta_{i,0},\dots,Q_{\ell-1}r'_{i,\ell-1}+\delta_{i,\ell-1})$ where $q_i$, $r'_{i,j}$ are chosen by
-$q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\leftarrow\D$ and $r\leftarrow\Z\cap[0,x_0)$.
+$q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D$ and $r\gets\Z\cap[0,x_0)$.
 \end{definition}
 
 \begin{theorem}
@@ -488,14 +488,14 @@ The semantic security of our scheme is based on a new decisional assumption of a
  For two specific
 integers $p$ and $q_0$, we use the following distribution over
 $\gamma$-bit integers:  
-\[ \D_\rho(p,q_0) = \left\{ \Choose q\leftarrow [0, q_0),
-  r\leftarrow \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
+\[ \D_\rho(p,q_0) = \left\{ \Choose q\gets [0, q_0),
+  r\gets \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
   \right\}. \] 
 
 \begin{definition}[Decisional Approximate GCD Problem: DACD]
 The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\D_{\rho}(p,q_0)$,
-%and a set $S:=\{x_i \mod x_0 \big|$ for polynomially many samples $x_i\leftarrow \D_{\gamma,\rho}(p)\}$, 
-determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\leftarrow\D_{\rho}(p,q_0)$ and $r\leftarrow\Z\cap[0,x_0)$.
+%and a set $S:=\{x_i \mod x_0 \big|$ for polynomially many samples $x_i\gets \D_{\gamma,\rho}(p)\}$, 
+determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D_{\rho}(p,q_0)$ and $r\gets\Z\cap[0,x_0)$.
 \end{definition}
 
 We prove the following Lemma in Appendix~\ref{p:red sec}.
