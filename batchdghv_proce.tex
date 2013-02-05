@@ -47,7 +47,7 @@
 \newcommand*{\sk}{\ensuremath{\mathsf{sk}}}
 \newcommand*{\DGHV}{\ensuremath{\mathsf{DGHV}}}
 \newcommand*{\BDGHV}{\ensuremath{\mathsf{BDGHV}}}
-\newcommand*{\CDGHV}{\ensuremath{\mathsf{BDGHV}}}
+\newcommand*{\CDGHV}{\ensuremath{\mathsf{CDGHV}}}
 \newcommand*{\FHE}{\ensuremath{\mathsf{FHE}}}
 
 \newcommand*\AddRoundKey{\ensuremath{\mathsf{AddRoundKey}}}
@@ -398,7 +398,7 @@ $x_0=q_0\cdot\pi$, where $q_0 \gets \Z \cap [0,2^{\gamma}/\pi)$
   is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
     not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
     generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
-  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$. 
+  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$, and abort otherwise.
   
   Choose the following integers $x_i$ and $x'_i$ with a quotient by $\pi$ uniformly
   and independently distributed in $\Z\cap [0, q_0)$, and with the
@@ -473,11 +473,39 @@ polynomially many samples from $\D:=\D_{\rho}(\vec{p};\vec{Q};q_0)$ and a set $X
 $q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D$ and $r\gets\Z\cap[0,x_0)$.
 \end{definition}
 
+The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption then states that this problem is hard for any polynomial time distinguisher.
+
 \begin{theorem}
 The \CDGHV\ scheme is semantically secure under the $l$-decisional approximate $\mathrm{GCD}_Q$ assumption.
 \end{theorem}
 \begin{proof}
-Soon to be filled.
+We provide a sketch of the proof.  See the complete proof in the full version~\cite{KLYC2013}.
+
+Essentially, the idea of the proof is that the \CDGHV\ scheme is a lossy encryption~\cite{BHY2009}.  Both the correctly generated public key $\pk$ and the lossy key $\pk'$ have the following form
+\[
+\left\langle x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\rangle,
+\]
+but note that, for the real public key $\pk$, $x_i$ are chosen as $x_i\gets\D_\rho(\vec{p}; \vec{Q}; q_0)$,
+and for the lossy public key $\pk'$, $x_i\gets\Z\cap[0,x_0)$.
+
+Now we may rely on the standard hybrid argument to show that $\pk$ and $\pk'$ are computationally indistinguishable, under the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption: for each $\hat\i\in\{1, \dots, \tau\}$, we define $\pk^{(\hat\i)}$, where
+\[
+x_i \gets \begin{cases}
+\Z\cap[0,x_0)&\text{for $i\leq \hat\i$},\\
+\D_\rho(\vec{p}; \vec{Q}; q_0)&\text{for $i>\hat\i$}.
+\end{cases}
+\]
+Then $\pk^{(0)}$ is identical as $\pk$, and $\pk^{(\tau)}$ is identical as $\pk'$, and using the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption, we may show that $\pk^{(\hat\i)}$ is indistinguishable from $\pk^{(\hat\i+1)}$ for $\hat\i=0$, \dots, $\tau-1$,
+proving that $\pk$ and $\pk'$ are computationally indistinguishable.
+
+Next, we show that under the lossy key $\pk'$, the \CDGHV\ scheme is secure statistically: for any two plaintexts $\vec{m}$ and $\vec{m}'$, the distributions of their corresponding ciphertexts $c$, $c'$ under the lossy key $\pk'$ are statistically close.  Recall that from equation~\ref{eq:enccdghv}, we have
+\begin{equation*}
+c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i + 
+	\sum_{i=1}^\tau 
+b_i\cdot x_i\right]_{x_0}.
+\end{equation*}
+
+Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are uniform on $\Z\cap[0,x_0)$, and we may use the leftover hash lemma.  In fact we may use the simplified version shown in Lemma~1 of~\cite{vDGHV2010} to conclude that the distribution of $[\sum_{i=1}^\tau b_i\cdot x_i]_{x_0}$ is statistically close to the uniform distribution on $\Z\cap[0,x_0)$, when the parameters are chosen according to Section~\ref{parameter}.  Therefore, the distribution of $c$ is uniform random, regardless of the plaintext vector $\vec{m}$.  This shows that \CDGHV\ is a lossy encryption scheme, and the semantic security directly follows from that.\qed
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
