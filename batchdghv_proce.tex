@@ -697,16 +697,17 @@ set under the following constraints:
 To satisfy the above constraints one can take $\rho=2\lambda$,
 $\eta=\Ot{\lambda^2}$, $\gamma=\Ot{\lambda^5}$,
 $\alpha=\Ot{\lambda^2}$, $\tau=\Ot{\lambda^3}$ as in~\cite{CNT2012},
-with $\rho'=\Ot{\lambda}$, $\alpha'=\Ot{\lambda^2}$ and $\ell=\Ot{\lambda^2}$. 
+with $\rho'=\Ot{\lambda}$, $\alpha'=\Ot{\lambda^2}$ and $\ell=\Ot{\lambda^2}$.\ignore{ 
 The main difference with the original DGHV scheme is that the
 ciphertext expansion ratio becomes $\gamma/\ell=\Ot{\lambda^3}$
 instead of $\gamma=\Ot{\lambda^5}$. However the public key size (using
 the compressed public key technique from~\cite{CNT2012}) becomes 
-$\Ot{\lambda^7}$ instead of $\Ot{\lambda^5}$. We refer to Section 
+$\Ot{\lambda^7}$ instead of $\Ot{\lambda^5}$.}
+We refer to Section 
 \ref{subsec:practical-implementation} for concrete parameters and
 timings.
 
-We prove in~\cite[Appendix~A]{CLT2013a} that the above scheme is correct for a set of permitted circuits.
+Finally, notice that the above scheme is correct for a set of permitted circuits as proved in~\cite[Appendix~A]{CLT2013a}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Semantic Security}\label{sec:semantic-security}
@@ -729,7 +730,7 @@ Yet, to prove the semantic security of our scheme,
 we introduce temporary a new decisional assumption that is implied by the 
 Error-Free Approximate-GCD assumption.
 
-Given integers $q_0$ and $p_0,\ldots,p_{\ell-1}$, we define the following oracle
+Given integers $q_0$ and $p_0,\ldots,p_{\ell-1}$, we define the oracle
 ${\cal O}_{q_0,(p_i)}(\vec{v})$ which, given as input a vector $\vec{v} \in {\mathbb
   Z}^\ell$, outputs $x$ with
 $$ x = \crt_{q_0,(p_i)}(q,v_0+2r_0,\ldots,v_{\ell-1}+2r_{\ell-1})$$
@@ -833,10 +834,8 @@ of precision after the binary point, and verifies
 \frac{1}{p_j}=\sum_{i=0}^{\Theta-1}
 s_{j,i} \cdot y_{i} + \varepsilon_j \bmod 2
 \end{equation}
-for some $\abs{\varepsilon_j}<2^{-\kappa}$.
-
-Output the secret key $\sk=(\vec s_0,\ldots,\vec s_{\ell-1})$ and public key $\pk=(\pk^*, y_0, \ldots, y_{\Theta-1})$.
-\\\vspace{-0.25cm}
+for some $\abs{\varepsilon_j}<2^{-\kappa}$. Finally, output the key pair
+$$\sk=(\vec s_0,\ldots,\vec s_{\ell-1}) \quad \text{and} \quad \pk = (\pk^*, y_0, \ldots, y_{\Theta-1})\;.$$
 \item[$\BDGHV.\Expand(\pk, c)$.] The ciphertext expansion procedure takes
   as input a ciphertext $c$ and computes an expanded
   ciphertext: for every $0\leq i\leq \Theta-1$, compute $z_i$ given by
@@ -898,9 +897,9 @@ secret-key bits $s_{j,i}$, with:
 \[ {\sigma}_i = \Encrypt(s_{0,i}, \ldots, s_{\ell-1,i}). \]
 This gives a new
 ciphertext that encrypts the same $\ell$-bit plaintext vector,
-but with a (possibly) reduced noise.  In other words, instead of having an
+but with a (possibly) reduced noise.  \ignore{In other words, instead of having an
 homomorphic evaluation of a single 
-equation~\eqref{eq:msz}, we have that the $\ell$ equations 
+equation~\eqref{eq:msz}, we have} Notice that the $\ell$ equations 
 in~\eqref{eq:decrypt} are homomorphically evaluated in parallel, one in
 each of the $\ell$ 
  plaintext slots of the ciphertext. Therefore  the $\Recrypt$
@@ -995,34 +994,42 @@ main difference is that the $\Recrypt$ operation is now performed in
 parallel over $\ell=531$ bits (for the ``Large'' setting) instead of a
 single bit. 
 
-\begin{table}[tb]\scriptsize
+\begin{table}[tb]\scriptsize\centering
 
-\qquad\qquad\qquad\qquad\begin{tabular}{|l|c|c||c|c|c|c|c|c|c|c|c||r|}
-\hline 
-\textbf{Instance}&$\lambda$&$\ell$&$\rho$&$\eta$&$\gamma\times 10^{-6}$&$\tau$&$\Theta$&$\pk$ size\\
-\hline
-\hline
-%Toy&$42$&$10$&$26$&$988$&$0.16$&$188$&$150$&$647$kB\\\hline
-Small&$52$&$37$&$41$&$1558$&$0.90$&$661$&$555$&$13.3$MB\\\hline
-Medium&$62$&$138$&$56$&$2128$&$4.6$&$2410$&$2070$&$304$MB\\\hline
-Large&$72$&$531$&$71$&$2698$&$21$&$8713$&$7965$&$5.6$GB\\\hline
-\end{tabular}
-
-\medskip
-\qquad\qquad\qquad\qquad\begin{tabular}{|l|c|c|c|c|c|c|}
-\hline 
-\textbf{Instance}&$\KeyGen$&$\Encrypt$&$\Decrypt$&$\Mult$&$\Expand$ & $\Recrypt$\\
-\hline
-\hline
-%Toy&$0.06$s&$0.02$s&$0$s&$0.003$s&$0.007$s&$0.11$s\\\hline
-Small&$1.74$s&$0.23$s&$0.02$s&$0.025$s&$0.08$s&$1.10$s\\\hline
-Medium&$73$s&$3.67$s&$0.45$s&$0.16$s&$1.60$s&$11.9$s\\\hline
-Large&$3493$s&$61$s&$9.8$s&$0.72$s&$28$s&$172$s\\\hline
-\end{tabular}\newline
 \caption{Benchmarking for our Batch DGHV with a compressed public key
   on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
 \label{t:concparams}
-  \vspace{-0.5cm}
+\begin{tabular}{|l|c|c||c|c|c|c|c|c|c|c|c||r|}
+\hline 
+\textbf{Instance}&$\lambda$&$\ell$&$\rho$&$\eta$&$\gamma/ 10^{6}$&$\tau$&$\Theta$&$\pk$ size\\
+\hline
+\hline
+%Toy&$42$&$10$&$26$&$988$&$0.16$&$188$&$150$&$647$kB\\\hline
+Small&$52$&$37$&$41$&$1558$&$0.90$&$661$&$555$&$13$ MB\\\hline
+Medium&$62$&$138$&$56$&$2128$&$4.6$&$2410$&$2070$&$304$ MB\\\hline
+Large&$72$&$531$&$71$&$2698$&$21$&$8713$&$7965$&$5.6$ GB\\\hline
+\end{tabular}\begin{tabular}{||c|c|c|c|c|}
+\hline 
+%\textbf{Instance}&
+$\KeyGen$&$\Encrypt$&$\Decrypt$&
+%$\Mult$&
+$\Expand$ & $\Recrypt$\\
+\hline
+\hline
+%Toy&$0.06$s&$0.02$s&$0$s&$0.003$s&$0.007$s&$0.11$s\\\hline
+%Small&
+$1.74$s&$0.23$s&$0.02$s&
+%$0.025$s&
+$0.08$s&$1.10$s\\\hline
+%Medium&
+$73$s&$3.67$s&$0.45$s&
+%$0.16$s&
+$1.60$s&$11.9$s\\\hline
+%Large&
+$3493$s&$61$s&$9.8$s&
+%$0.72$s&
+$28$s&$172$s\\\hline
+\end{tabular}
 \end{table}
 
 
@@ -1080,104 +1087,85 @@ of the implementation are given in~\cite{CLT2013a}.
   \begin{tikzpicture}[node distance=6em,auto,>=latex',scale=0.76]
   % Bottom
   
-  \draw (0,1) rectangle (16,2);
+  \draw (0,0.75) rectangle (14.25,2);
   
-  \draw (0,1) rectangle (0.25,2);
-  \node[rotate=90,scale=0.8] at (0.125, 1.5) {\tiny AES 1};
-  \draw (0.25,1) rectangle (0.5,2);
-  \node[rotate=90,scale=0.8] at (0.375, 1.5) {\tiny AES 2};
-  \draw (0.5,1) rectangle (0.75,2);
-  \node[rotate=90,scale=0.8] at (0.625, 1.5) {\tiny AES 3};
-  \draw (0.75,1) rectangle (1.75,2);
-  \node at (1.25, 1.5) {\ldots};
-  \draw (1.75,1) rectangle (2,2);
-  \node[rotate=90,scale=0.8] at (1.875, 1.5) {\tiny AES $k$};
+  \draw (0,0.75) rectangle (0.35,2);
+  \node[rotate=90,scale=0.8] at (0.175, 1.325) {\small AES 1};
+  \draw (0.35,0.75) rectangle (0.7,2);
+  \node[rotate=90,scale=0.8] at (0.525, 1.325) {\small AES 2};
+  \node at (1.1, 1.325) {\ldots};
+  \draw (1.4,0.75) rectangle (1.75,2);
+  \node[rotate=90,scale=0.8] at (1.575, 1.325) {\small AES $k$};
   
-  \draw (2,1) rectangle (2.25,2);
-  \node[rotate=90,scale=0.8] at (2.125, 1.5) {\tiny AES 1};
-  \draw (2.25,1) rectangle (2.5,2);
-  \node[rotate=90,scale=0.8] at (2.375, 1.5) {\tiny AES 2};
-  \draw (2.5,1) rectangle (2.75,2);
-  \node[rotate=90,scale=0.8] at (2.625, 1.5) {\tiny AES 3};
-  \draw (2.75,1) rectangle (3.75,2);
-  \node at (3.25, 1.5) {\ldots};
-  \draw (3.75,1) rectangle (4,2);
-  \node[rotate=90,scale=0.8] at (3.875, 1.5) {\tiny AES $k$};
+  \draw (1.75,0.75) rectangle (2.1,2);
+  \node[rotate=90,scale=0.8] at (1.925, 1.325) {\small AES 1};
+  \draw (2.1,0.75) rectangle (2.45,2);
+  \node[rotate=90,scale=0.8] at (2.275, 1.325) {\small AES 2};
+  \node at (2.85, 1.325) {\ldots};
+  \draw (3.15,0.75) rectangle (3.5,2);
+  \node[rotate=90,scale=0.8] at (3.325, 1.325) {\small AES $k$};
   
-  \draw (4,1) rectangle (4.25,2);
-  \node[rotate=90,scale=0.8] at (4.125, 1.5) {\tiny AES 1};
-  \draw (4.25,1) rectangle (4.5,2);
-  \node[rotate=90,scale=0.8] at (4.375, 1.5) {\tiny AES 2};
-  \draw (4.5,1) rectangle (4.75,2);
-  \node[rotate=90,scale=0.8] at (4.625, 1.5) {\tiny AES 3};
-  \draw (4.75,1) rectangle (5.75,2);
-  \node at (5.25, 1.5) {\ldots};
-  \draw (5.75,1) rectangle (6,2);
-  \node[rotate=90,scale=0.8] at (5.875, 1.5) {\tiny AES $k$};
+  \draw (3.5,0.75) rectangle (3.85,2);
+  \node[rotate=90,scale=0.8] at (3.675, 1.325) {\small AES 1};
+  \draw (3.85,0.75) rectangle (4.2,2);
+  \node[rotate=90,scale=0.8] at (4.025, 1.325) {\small AES 2};
+  \node at (4.6, 1.325) {\ldots};
+  \draw (4.9,0.75) rectangle (5.25,2);
+  \node[rotate=90,scale=0.8] at (5.075, 1.325) {\small AES $k$};
   
-  \draw (6,1) rectangle (6.25,2);
-  \node[rotate=90,scale=0.8] at (6.125, 1.5) {\tiny AES 1};
-  \draw (6.25,1) rectangle (6.5,2);
-  \node[rotate=90,scale=0.8] at (6.375, 1.5) {\tiny AES 2};
-  \draw (6.5,1) rectangle (6.75,2);
-  \node[rotate=90,scale=0.8] at (6.625, 1.5) {\tiny AES 3};
-  \draw (6.75,1) rectangle (7.75,2);
-  \node at (7.25, 1.5) {\ldots};
-  \draw (7.75,1) rectangle (8,2);
-  \node[rotate=90,scale=0.8] at (7.875, 1.5) {\tiny AES $k$};
+  \draw (5.25,0.75) rectangle (5.6,2);
+  \node[rotate=90,scale=0.8] at (5.425, 1.325) {\small AES 1};
+  \draw (5.60,0.75) rectangle (5.95,2);
+  \node[rotate=90,scale=0.8] at (5.775, 1.325) {\small AES 2};
+  \node at (6.35, 1.325) {\ldots};
+  \draw (6.65, 0.75) rectangle (7,2);
+  \node[rotate=90,scale=0.8] at (6.825, 1.325) {\small AES $k$};
+    
+  \node at (8, 1.325) {\ldots};
   
-  \node at (9, 1.5) {\ldots};
+  \draw (9,0.75) rectangle (9.35,2);
+  \node[rotate=90,scale=0.8] at (9.175, 1.325) {\small AES 1};
+  \draw (9.35,0.75) rectangle (9.7,2);
+  \node[rotate=90,scale=0.8] at (9.525, 1.325) {\small AES 2};
+  \node at (10.1, 1.325) {\ldots};
+  \draw (10.4,0.75) rectangle (10.75,2);
+  \node[rotate=90,scale=0.8] at (10.575, 1.325) {\small AES $k$};
   
-  \draw (10,1) rectangle (10.25,2);
-  \node[rotate=90,scale=0.8] at (10.125, 1.5) {\tiny AES 1};
-  \draw (10.25,1) rectangle (10.5,2);
-  \node[rotate=90,scale=0.8] at (10.375, 1.5) {\tiny AES 2};
-  \draw (10.5,1) rectangle (10.75,2);
-  \node[rotate=90,scale=0.8] at (10.625, 1.5) {\tiny AES 3};
-  \draw (10.75,1) rectangle (11.75,2);
-  \node at (11.25, 1.5) {\ldots};
-  \draw (11.75,1) rectangle (12,2);
-  \node[rotate=90,scale=0.8] at (11.875, 1.5) {\tiny AES $k$};
+  \node at (11.625, 1.325) {\ldots};
   
-  \node at (13, 1.5) {\ldots};
-  
-  \draw (14,1) rectangle (14.25,2);
-  \node[rotate=90,scale=0.8] at (14.125, 1.5) {\tiny AES 1};
-  \draw (14.25,1) rectangle (14.5,2);
-  \node[rotate=90,scale=0.8] at (14.375, 1.5) {\tiny AES 2};
-  \draw (14.5,1) rectangle (14.75,2);
-  \node[rotate=90,scale=0.8] at (14.625, 1.5) {\tiny AES 3};
-  \draw (14.75,1) rectangle (15.75,2);
-  \node at (15.25, 1.5) {\ldots};
-  \draw (15.75,1) rectangle (16,2);
-  \node[rotate=90,scale=0.8] at (15.875, 1.5) {\tiny AES $k$};
+  \draw (12.5,0.75) rectangle (12.85,2);
+  \node[rotate=90,scale=0.8] at (12.675, 1.325) {\small AES 1};
+  \draw (12.85,0.75) rectangle (13.2,2);
+  \node[rotate=90,scale=0.8] at (13.025, 1.325) {\small AES 2};
+  \node at (13.6, 1.325) {\ldots};
+  \draw (13.9,0.75) rectangle (14.25,2);
+  \node[rotate=90,scale=0.8] at (14.075, 1.325) {\small AES $k$};
   
   % Middle
-  \draw (0,2) rectangle (2,2.5);
-  \node at (1, 2.25) {Row 0};
-  \draw (0,2) rectangle (4,2.5);
-  \node at (3, 2.25) {Row 1};
-  \draw (0,2) rectangle (6,2.5);
-  \node at (5, 2.25) {Row 2};
-  \draw (0,2) rectangle (8,2.5);
-  \node at (7, 2.25) {Row 3};
-  \draw (0,2) rectangle (10,2.5);
-  \node at (9, 2.25) {\ldots};
-  \draw (0,2) rectangle (12,2.5);
-  \node at (11, 2.25) {Row 0};
-  \draw (0,2) rectangle (14,2.5);
-  \node at (13, 2.25) {\ldots};
-  \draw (0,2) rectangle (16,2.5);
-  \node at (15, 2.25) {Row 3};
+  \draw (0,2) rectangle (1.75,2.5);
+  \node at (0.875, 2.25) {Row 0};
+  \draw (1.75,2) rectangle (3.5,2.5);
+  \node at (2.625, 2.25) {Row 1};
+  \draw (3.5,2) rectangle (5.25,2.5);
+  \node at (4.375, 2.25) {Row 2};
+  \draw (5.25,2) rectangle (7,2.5);
+  \node at (6.125, 2.25) {Row 3};
+  \node at (8, 2.25) {\ldots};
+  \draw (9,2) rectangle (10.75,2.5);
+  \node at (9.875, 2.25) {Row 0};
+  \draw (10.75,2) rectangle (12.5,2.5);
+  \node at (11.625, 2.25) {\ldots};
+  \draw (12.5,2) rectangle (14.25,2.5);
+  \node at (13.375, 2.25) {Row 3};
   
   
   % Top
-  \draw (0,2.5) rectangle (8,3);
-  \node at (4, 2.75) {Column 0};
-  \draw (8,2.5) rectangle (10,3);
-  \node at (9, 2.75) {\ldots};
-  \draw (10,2.5) rectangle (16,3);
-  \node at (13, 2.75) {Column 3};
+  \draw (0,2.5) rectangle (7,3);
+  \node at (3.5, 2.75) {Column 0};
+  \draw (7,2.5) rectangle (9,3);
+  \node at (8, 2.75) {\ldots};
+  \draw (9,2.5) rectangle (14.25,3);
+  \node at (11.625, 2.75) {Column 3};
   \end{tikzpicture}
   \caption{Bit ordering in $\vec m_i$ in the \bwbs{} representation}
   \label{fig:bwbs-state}
@@ -1230,7 +1218,10 @@ $\Add$,  $5120$
 $\Mult$ and $2448$ $\Recrypt$. 
 
 \begin{table}[tb]\centering
-
+\caption{Timings of byte-wise and state-wise homomorphic AES developed in
+  C++ with GMP,
+  running on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
+\label{table:aes-results}
 \subtable[Timings for byte-wise representation]{
 \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
 \hline \textbf{Instance}&$\lambda$&$\ell$&$\#$ of enc.&
@@ -1257,10 +1248,6 @@ $\Mult$ and $2448$ $\Recrypt$.
 
 \end{tabular}
 }
-\caption{Timings of byte-wise and state-wise homomorphic AES developed in
-  C++ with GMP,
-  running on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
-\label{table:aes-results}
 \end{table}
 
 \paragraph{Implementation Results.} We implemented both variants
