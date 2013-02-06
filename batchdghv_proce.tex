@@ -47,7 +47,7 @@
 \newcommand*{\sk}{\ensuremath{\mathsf{sk}}}
 \newcommand*{\DGHV}{\ensuremath{\mathsf{DGHV}}}
 \newcommand*{\BDGHV}{\ensuremath{\mathsf{BDGHV}}}
-\newcommand*{\CDGHV}{\ensuremath{\mathsf{BDGHV}}}
+\newcommand*{\CDGHV}{\ensuremath{\mathsf{IDGHV}}}
 \newcommand*{\FHE}{\ensuremath{\mathsf{FHE}}}
 
 \newcommand*\AddRoundKey{\ensuremath{\mathsf{AddRoundKey}}}
@@ -415,7 +415,7 @@ $$
 $$
 
 Finally, let $\pk = \left\langle x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\rangle$ and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
-
+\\\vspace{-0.25cm}
 \item[$\CDGHV.\Encrypt(\pk, {\vec{m}})$.] For any $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose random binary vector $\vec{b}=(b_i)_{1\leq i \leq \tau}\in \{0,1\}^\tau$, output the ciphertext:
 \begin{equation}
 \label{eq:enccdghv}
@@ -429,7 +429,6 @@ b_i\cdot x_i\right]_{x_0}.
 \\\vspace{-0.25cm}
 \item[$\CDGHV.\Mult(\pk, c_1, c_2)$.] Output $c_1 \cdot c_2 \bmod x_0$.
 \end{description}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parameters and Correctness}\label{parameter}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -445,7 +444,7 @@ The parameters should satisfy the following constraints:
 \item $\tau=\gamma+\omega(\log\lambda)$, in order to use left-over hash lemma in the security proof which is given in Section~\ref{reduce_acd}.
 \end{itemize}
 We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5), \eta=\tilde{\mathcal{O}}(\lambda^2),
-\rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. 
+\rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. We remark that $b_i$ can be chosen in the much larger interval so as to reduce the public key size as in Section~\ref{sec:batch-error-free}. 
 
 The following lemma is proven in Appendix~\ref{app:correctness} with the definition of correctness for
 homomorphic encryption schemes, with respect to a set
@@ -498,13 +497,16 @@ The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\e
 determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D_{\rho}(p,q_0)$ and $r\gets\Z\cap[0,x_0)$.
 \end{definition}
 
-We prove the following Lemma in Appendix~\ref{p:red sec}.
+We give a sketch of the proof of the following lemma. For the detailed proof, see the full version \cite{KLYC2013}. 
 \begin{lemma}
 \label{le:redsec}
 The $\ell$-decisional-Approximate-GCD$_Q$ problem is hard if the
 decisional-approximate-GCD problem is hard.
 \end{lemma}
+\begin{proof}[Sketch]
 
+
+\end{proof}
 \begin{corollary}
 The generalized DGHV scheme is semantically secure if the
 decisional-approximate-GCD assumption holds.
