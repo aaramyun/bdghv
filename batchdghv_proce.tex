@@ -55,6 +55,7 @@ Large&$72$&$531$&$71$&$143$&$2698$&$21.0$&$2411$&$2483$&$8713$&$76022$&$7965$&$4
 \newcommand*{\sk}{\ensuremath{\mathsf{sk}}}
 \newcommand*{\DGHV}{\ensuremath{\mathsf{DGHV}}}
 \newcommand*{\BDGHV}{\ensuremath{\mathsf{BDGHV}}}
+\newcommand*{\CDGHV}{\ensuremath{\mathsf{IDGHV}}}
 \newcommand*{\FHE}{\ensuremath{\mathsf{FHE}}}
 
 \newcommand*\AddRoundKey{\ensuremath{\mathsf{AddRoundKey}}}
@@ -63,6 +64,7 @@ Large&$72$&$531$&$71$&$143$&$2698$&$21.0$&$2411$&$2483$&$8713$&$76022$&$7965$&$4
 \newcommand*\MixColumns{\ensuremath{\mathsf{MixColumns}}}
 \newcommand*\GF{\ensuremath{\mathrm{GF}}}
 
+\newcommand*\D{\ensuremath{\mathcal D}}
 \renewcommand*\O{\ensuremath{\mathcal O}}
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
   \noindent\keywordname\enspace\ignorespaces#1.}
@@ -385,9 +387,9 @@ addition and multiplications.  Or, if we choose $Q_i$ to be mutually prime, then
 $\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as somewhat homomorphic encryption supporting arithmetic operations
 on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
 
-In order to allow public-key encryption, we provide integers $x'_i$ and $x_j$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r_{j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{j}$ for all $i$, $j$.  Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
+In order to allow public-key encryption, we provide integers $x'_i$ and $x_j$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$.  Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
 \[
-c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{j\in S} x_j\right]_{x_0}.
+c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 \]
 
 As explained in the Introduction, the additional, larger noise $2r$ from the DGHV scheme is not used in this version.
@@ -397,18 +399,126 @@ In Section~\ref{sec:batch-error-free}, we present another version which handles 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{description}\label{CDGHV}
+\item[$\CDGHV.\KeyGen(1^\lambda,(Q_j)_{0\leq j <\ell})$.] Choose $\eta$-bit distinct primes $p_j$, $0\leq j<\ell$, and denote $\pi$
+their product. Let us define the error-free public key element
+$x_0=q_0\cdot\pi$, where $q_0 \gets \Z \cap [0,2^{\gamma}/\pi)$
+  is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
+    not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
+    generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
+  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$. 
+  
+  Choose the following integers $x_i$ and $x'_i$ with a quotient by $\pi$ uniformly
+  and independently distributed in $\Z\cap [0, q_0)$, and with the
+    following distribution modulo $p_j$ for $0 \leq j < \ell$:
+$$
+\begin{array}{lll}
+1 \leq i \leq \tau, & \qquad x_i\bmod p_j = Q_j r_{i,j},& \qquad r_{i,j}
+\gets\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+
+0\leq i\leq \ell-1, & \qquad x'_i\bmod p_j = Q_jr'_{i,j}+\delta_{i,j}, &
+\qquad r'_{i,j}\gets\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+
+\end{array}
+$$
+
+Finally, let $\pk = \left\langle x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\rangle$ and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
+\\\vspace{-0.25cm}
+\item[$\CDGHV.\Encrypt(\pk, {\vec{m}})$.] For any $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose random binary vector $\vec{b}=(b_i)_{1\leq i \leq \tau}\in \{0,1\}^\tau$, output the ciphertext:
+\begin{equation}
+\label{eq:enccdghv}
+c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i + 
+	\sum_{i=1}^\tau 
+b_i\cdot x_i\right]_{x_0}.
+\end{equation}
+\item[$\CDGHV.\Decrypt(\sk, c)$.] Output $\vec{m}=(m_0,\ldots,m_{\ell-1})$ where $m_j \gets [c]_{p_j} \bmod Q_j$.
+\\\vspace{-0.25cm}
+\item[$\CDGHV.\Add(\pk, c_1, c_2)$.] Output $c_1+c_2 \bmod x_0$
+\\\vspace{-0.25cm}
+\item[$\CDGHV.\Mult(\pk, c_1, c_2)$.] Output $c_1 \cdot c_2 \bmod x_0$.
+\end{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Parameters and Correctness}\label{parameter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Roughly speaking, $\ell$ determines the size of the message space.
+The binary length of $Q_j$ can be an integer from $2$ to $\eta/8$ depending on the multiplicative depth of the scheme. The details of analysis are given in Appendix~\ref{app:correctness}.
+The parameters should satisfy the following constraints: 
+\begin{itemize}
+\renewcommand{\labelitemi}{\tiny $\bullet$}
+\itemsep.4em
+\item $\rho=\tilde{\mathcal{O}}(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
+\item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987} and to permit enough multiplicative depth (in Appendix~\ref{app:correctness}),
+\item $\gamma=\eta^2\omega(\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
+\item $\tau=\gamma+\omega(\log\lambda)$, in order to use left-over hash lemma in the security proof which is given in Section~\ref{reduce_acd}.
+\end{itemize}
+We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5), \eta=\tilde{\mathcal{O}}(\lambda^2),
+\rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. We remark that $b_i$ can be chosen in the much larger interval so as to reduce the public key size as in Section~\ref{sec:batch-error-free}. 
+
+The following lemma is proven in Appendix~\ref{app:correctness} with the definition of correctness for
+homomorphic encryption schemes, with respect to a set
+$\mathcal{C_E}$ of permitted circuits.
+
+\begin{lemma}\label{lem:correctness}
+The above scheme is correct for $\mathcal{C_E}$.
+\end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Parameters and Correctness}
+\subsection{Semantic Security}\label{reduce_acd}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Semantic Security}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Here we show the security of the \CDGHV\ scheme.  In order to prove this, we introduce a new assumption called $\ell$-$\mathbf{DACD}_Q$, and give a security proof based on this assumption.  In fact, this rather complicated assumption is given only as an intermediate step for the proof, and in Section~\ref{decisional_assumption}, we prove this assumption from a simpler decisional assumption.
+
+Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \dots, Q_{\ell-1})$ of length $\ell$ and an integer $q_0$, let us define the distribution $\D_\rho(\vec{p}; \vec{Q}; q_0)$ as follows.  The output of the distribution is
+\[
+x=\crt_{q_0,p_1,\dots,p_k}(q,Q_0r_0,\dots,Q_{\ell-1}r_{\ell-1}),
+\]
+where $q\gets\Z\cap[0,q_0)$ and $r_i\gets\Z\cap(-2^\rho,2^\rho)$ for $i=0,\dots,\ell-1$
+
+\begin{definition}[$\ell$-Decisional Approximate $\mathbf{GCD}_Q$ Problem: $\ell$-$\mathbf{DACD}_Q$] \\
+The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ problem is: for $\eta$-bit distinct primes $p_0,\dots,p_{\ell-1}$ and $\mu$-bit integers $Q_0,\dots,Q_{\ell-1}$, given a $\gamma$-bit integer  $x_0:=q_0p_0\cdots p_{\ell-1}$, with $\gcd(x_0,Q_i)=1$ for $i=0,\dots,\ell-1$, and  %$q_0=\Big\lfloor{2^\gamma\over\prod_{i=1}^kp_i}\Big\rfloor$ , 
+polynomially many samples from $\D:=\D_{\rho}(\vec{p};\vec{Q};q_0)$ and a set $X$ consisting of $\ell$ integers $x'_i=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q_i,Q_0r'_{i,0}+\delta_{i,0},\dots,Q_{\ell-1}r'_{i,\ell-1}+\delta_{i,\ell-1})$ where $q_i$, $r'_{i,j}$ are chosen by
+$q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D$ and $r\gets\Z\cap[0,x_0)$.
+\end{definition}
+
+\begin{theorem}
+The \CDGHV\ scheme is semantically secure under the $l$-decisional approximate $\mathrm{GCD}_Q$ assumption.
+\end{theorem}
+\begin{proof}
+Soon to be filled.
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Hardness Assumption}
+\subsection{Hardness Assumption}\label{decisional_assumption}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The semantic security of our scheme is based on a new decisional assumption of approximate GCD problem. 
+%In fact, decisional approximate GCD is considered by Coron et al[] for the first time.
+ For two specific
+integers $p$ and $q_0$, we use the following distribution over
+$\gamma$-bit integers:  
+\[ \D_\rho(p,q_0) = \left\{ \Choose q\gets [0, q_0),
+  r\gets \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
+  \right\}. \] 
+
+\begin{definition}[Decisional Approximate GCD Problem: DACD]
+The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\D_{\rho}(p,q_0)$,
+%and a set $S:=\{x_i \mod x_0 \big|$ for polynomially many samples $x_i\gets \D_{\gamma,\rho}(p)\}$, 
+determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D_{\rho}(p,q_0)$ and $r\gets\Z\cap[0,x_0)$.
+\end{definition}
+
+We give a sketch of the proof of the following lemma. For the detailed proof, see the full version \cite{KLYC2013}. 
+\begin{lemma}
+\label{le:redsec}
+The $\ell$-decisional-Approximate-GCD$_Q$ problem is hard if the
+decisional-approximate-GCD problem is hard.
+\end{lemma}
+\begin{proof}[Sketch]
+
+
+\end{proof}
+\begin{corollary}
+The generalized DGHV scheme is semantically secure if the
+decisional-approximate-GCD assumption holds.
+\end{corollary}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Batch DGHV Scheme Based on the Error-Free Approximate-GCD}\label{sec:batch-error-free}
@@ -520,9 +630,10 @@ independent distributions, and eventually leads to a security proof.
 random $\eta$-bit primes $p_j$, $0\leq j<\ell$, and denote $\pi$
 their product. Let us define the error-free public key element
 $x_0=q_0\cdot\pi$, where $q_0 \leftarrow \Z \cap [0,2^{\gamma}/\pi)$
-  is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
-    not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
-    generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
+  is a $2^{\lambda^2}$-rough integer.
+%  \footnote{An integer $a$ is $b$-rough when it does
+%    not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
+%    generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
 
   Generate the following integers $x_i$, $x'_i$ and $\varPi_i$ with a quotient by $\pi$ uniformly
   and independently distributed in $\Z\cap [0, q_0)$, and with the
@@ -677,12 +788,13 @@ the same assumption as the original scheme, \ie the
 Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
 However we can only show its security under the
 (stronger) error-free Approximate-GCD assumption already considered in~\cite{CMNT2011,CNT2012}.
- For two specific
-integers $p$ and $q_0$, we use the following distribution over
-$\gamma$-bit integers:  
-\[ \mathcal D_\rho(p,q_0) = \left\{ \Choose q\leftarrow [0, q_0),
-  r\leftarrow \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
-  \right\}. \] 
+
+% For two specific
+%integers $p$ and $q_0$, we use the following distribution over
+%$\gamma$-bit integers:  
+%\[ \mathcal D_\rho(p,q_0) = \left\{ \Choose q\leftarrow [0, q_0),
+%  r\leftarrow \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
+%  \right\}. \] 
 
 \begin{definition}[Error-free approximate GCD] 
 The $(\rho, \eta,{\gamma})$-error-free Appro\-xi\-ma\-te-GCD pro\-blem
