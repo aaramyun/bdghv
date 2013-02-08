@@ -522,6 +522,7 @@ $\gamma$-bit integers:
   \right\}. \] 
 
 \begin{definition}[Decisional Approximate GCD Problem: DACD]
+\label{def:dagcd}
 The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\D_{\rho}(p,q_0)$,
 %and a set $S:=\{x_i \mod x_0 \big|$ for polynomially many samples $x_i\gets \D_{\gamma,\rho}(p)\}$, 
 determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D_{\rho}(p,q_0)$ and $r\gets\Z\cap[0,x_0)$.
@@ -551,55 +552,29 @@ decisional-approximate-GCD assumption.
 \section{Batch DGHV Scheme Based on the Error-Free Approximate-GCD}\label{sec:batch-error-free}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%{\color{red} 
+In this section, we present a generalization of the $\CDGHV$ scheme based on 
+the \emph{computational} Error-Free Approximate-GCD problem already used 
+in~\cite{vDGHV2010,CMNT2011,CNT2012} rather than on the Decisional 
+Approximate-GCD problem (Definition~\ref{def:dagcd}). This is made possible 
+by adding a new set of elements in the public key but yields a more intricate 
+scheme. For sake of simplicity, we assume that $Q_0=\cdots=Q_{\ell-1}=2$ 
+throughout the rest of the paper. Notice however that the security proof of 
+this Section extends easily to general $Q_i$'s as in Section~\ref{sec:batch-decisional}.
 
-We now describe our extension of the DGHV scheme to the batch setting. The goal is to
-pack $\ell$ plaintext bits $m_0,\ldots,m_{\ell-1}$ into a single ciphertext. 
-Homomorphic addition and multiplication will then apply in parallel
-and component-wise on the $m_i$'s. 
-
-As explained in the introduction we use Chinese Remaindering with respect
-to $\ell$ coprime integers $p_0,\ldots,p_{\ell-1}$ to encrypt
-$(m_0,\ldots,m_{\ell-1})$ as
-\[
-c = q\cdot \prod\limits_{i=0}^{\ell-1} p_i +
-    \crt_{p_0,\ldots,p_{\ell-1}}(2r_0+m_0,\ldots,2r_{\ell-1}+m_{\ell-1})\;. 
-\]
-
-By extending the original DGHV public-key encryption equation
-\eqref{eq:DGHV}, a plaintext vector  $\vec m=(m_0,\ldots,m_{\ell-1})$
-could then be encrypted into a single ciphertext:
-\begin{equation}
-\label{eq:cbatch}
-c = \left[\sum_{i=0}^{\ell-1} m_i\cdot x'_i + 2r +
-  2\sum\limits_{i\in S} x_i\right]_{x_0}
-\end{equation}
-where the plaintext elements $x_i$ satisfy $x_i \bmod p_j=r_{i,j}$ and
-the additional public key elements $x'_i$ are such that $x'_i\bmod
-p_j=\delta_{i,j}+2r'_{i,j}$; this yields $[c\bmod p_j]_2=m_j$ as
-required.%
-\footnote{We denote by $\delta_{i,j}$ the Kronecker delta,
-$\delta_{i,j}=1$ if $i=j$ and $0$ otherwise.}
-
-The main challenge, however, is to obtain a batch DGHV scheme which is
-still semantically secure. The proof of semantic security for the
-original DGHV scheme is  based on applying the Leftover Hash Lemma on the
-subset sum, and using the random $2r$ in \eqref{eq:c} to further
-randomize the ciphertext modulo $p$. However we see that such
-randomization with $2r$ in \eqref{eq:cbatch} does not work in the batch
-setting, because the \emph{same} random term $2r=2r \bmod p_i$ is added
+We recall that, as mentioned in the Introduction, one cannot add a
+randomization with $2r$ during encryption in the batch scheme (cf.~Equation~\eqref{eq:enccdghv}) as in the DGHV scheme. Indeed, this randomisation does not work because the \emph{same} random term $2r=2r \bmod p_i$ is added
 modulo each of the $p_i$, whereas for the security proof to go through
 these random terms should be independently distributed modulo each of the
 $p_i$'s. Therefore a new technique is required to extend DGHV to
 semantically secure batch encryption.
 
-In the following, we start by describing a variant of DGHV still for a
+\paragraph{Variant of the DGHV Scheme.} In the following, we start by describing a variant of DGHV still for a
 single bit message $m$ only, but which \emph{does} extend naturally to the
 batch setting. We first consider the DGHV scheme without the additional
 random $2r$, since this term is of no use in the batch setting. A single
 message bit $m$ is then encrypted as
 \[
-    c = \left[m + 2\sum\limits_{i\in S} x_i\right]_{x_0}
+    c = \Big[m + 2\sum\limits_{i\in S} x_i\Big]_{x_0}
 \]
 where $x_i=q_i \cdot p+r_i$. In order to prove semantic security as in
 \cite{vDGHV2010}, one should prove that the values $q$ and $r'$ given by
@@ -626,8 +601,8 @@ can be done by extending the public key with a new element $\varPi$ such
 that $\varPi \bmod p=\varpi$. Encryption would then be performed as
 \begin{equation}
 \label{eq:DGHVmod}
-c = \left[m + 2b \cdot \varPi+
-  2\sum\limits_{i\in S} x_i\right]_{x_0}
+c = \Big[m + 2b \cdot \varPi+
+  2\sum\limits_{i\in S} x_i\Big]_{x_0}
 \end{equation}
 for some large random integer $b$. Modulo $p$ this gives a new integer
 $r''=r' + b \cdot \varpi$; we argue that this enables to proceed as if
@@ -640,13 +615,13 @@ random multiple $b \cdot \varpi$. Formally  the distribution of $r' + b
 \varpi$, which enables us to apply the LHL to $r' \bmod \varpi$ and
 eventually obtain a security proof.
 
-Now the advantage of \eqref{eq:DGHVmod} is that it can be easily extended
+\paragraph{Extension to the Batch Scheme.} Now the advantage of \eqref{eq:DGHVmod} is that it can be easily extended
 to the batch setting. Instead of using a single random multiple of
 $\varPi$, we use a subset sum of $\ell$ such multiples $\varPi_i$, where
 $\varPi_i \bmod p_j=\varpi_{i,j}$. The Leftover Hash Lemma is then
 applied modulo the lattice generated by the $\varpi_{i,j}$. This shows
 that the random noise values modulo the $p_i$'s follow essentially
-independent distributions, and eventually leads to a security proof. 
+independent distributions, and eventually leads to a security proof based on the Error-Free Approximate-GCD problem. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}\label{subsec:description}
@@ -667,19 +642,17 @@ $x_0=q_0\cdot\pi$, where $q_0 \leftarrow \Z \cap [0,2^{\gamma}/\pi)$
     following distribution modulo $p_j$ for $0 \leq j < \ell$:
 $$
 \begin{array}{lll}
-1 \leq i \leq \tau, & \qquad x_i\bmod p_j = 2r_{i,j},& \qquad r_{i,j}
-\leftarrow\Z\cap(-2^{\rho'-1}, 2^{\rho'-1}) \\[.2cm]
+1 \leq i \leq \tau, & \qquad x_i\bmod p_j = 2r_{i,j},& \\[.2cm]
 
-0\leq i\leq \ell-1, & \qquad x'_i\bmod p_j = 2r'_{i,j}+\delta_{i,j}, &
-\qquad r'_{i,j}\leftarrow\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+0\leq i\leq \ell-1, & \qquad x'_i\bmod p_j = 2r'_{i,j}+\delta_{i,j},& \\[.2cm]
 
 0\leq i\leq \ell-1, & \qquad \varPi_i \bmod p_j = 2\varpi_{i,j} +
-\delta_{i,j}\cdot 2^{\rho'+1}, &
-\qquad \varpi_{i,j}\leftarrow\Z\cap(-2^{\rho}, 2^{\rho})
+\delta_{i,j}\cdot 2^{\rho'+1},
 \end{array}
 $$
-
-Finally, let $\pk = \left\langle x_0, \left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}, \left(\varPi_i\right)_{0\leq i\leq {\ell-1}}\right\rangle$ and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
+with $r_{i,j}\leftarrow\Z\cap(-2^{\rho'-1}, 2^{\rho'-1})$ and $r'_{i,j}, \varpi_{i,j}\leftarrow\Z\cap(-2^{\rho}, 2^{\rho})$. Finally, let 
+$$\pk = \left\langle x_0, \left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}, \left(\varPi_i\right)_{0\leq i\leq {\ell-1}}\right\rangle$$
+and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
 
 \item[$\BDGHV.\Encrypt(\pk, \vec{m} \in \{0,1\}^\ell)$.] Choose 
   random integer vectors $\vec b=(b_i)_{1\leq i\leq \tau}
@@ -728,58 +701,53 @@ set under the following constraints:
 %  and~\cite{vDGHV2010,CMNT2011}).
 \end{itemize}
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Correctness}\label{subsec:correctness}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 To satisfy the above constraints one can take $\rho=2\lambda$,
 $\eta=\Ot{\lambda^2}$, $\gamma=\Ot{\lambda^5}$,
 $\alpha=\Ot{\lambda^2}$, $\tau=\Ot{\lambda^3}$ as in~\cite{CNT2012},
-with $\rho'=\Ot{\lambda}$, $\alpha'=\Ot{\lambda^2}$ and $\ell=\Ot{\lambda^2}$. 
+with $\rho'=\Ot{\lambda}$, $\alpha'=\Ot{\lambda^2}$ and $\ell=\Ot{\lambda^2}$.\ignore{ 
 The main difference with the original DGHV scheme is that the
 ciphertext expansion ratio becomes $\gamma/\ell=\Ot{\lambda^3}$
 instead of $\gamma=\Ot{\lambda^5}$. However the public key size (using
 the compressed public key technique from~\cite{CNT2012}) becomes 
-$\Ot{\lambda^7}$ instead of $\Ot{\lambda^5}$. We refer to Section 
+$\Ot{\lambda^7}$ instead of $\Ot{\lambda^5}$.}
+We refer to Section 
 \ref{subsec:practical-implementation} for concrete parameters and
 timings.
 
-We prove the following lemma in Appendix~\ref{app:correctness}. We refer
-to Appendix~\ref{app:correctness} for the definition of correctness for
-batch homomorphic encryption schemes, with respect to a set
-$\mathcal{C_E}$ of permitted circuits.
-
-\begin{lemma}\label{lem:correctness}
-The above scheme is correct for $\mathcal{C_E}$.
-\end{lemma}
+Finally, notice that the above scheme is correct for a set of permitted circuits as proved in~\cite[Appendix~A]{CLT2013a}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Semantic Security}\label{sec:semantic-security}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section we prove that our batch DGHV scheme is semantically
-secure under a new assumption, which we call the
-error-free $\ell$-decisional-approximate-GCD assumption. We then show that this
-new assumption is implied by the error-free Approximate-GCD assumption
-already considered in~\cite{CMNT2011,CNT2012}.
+Ideally we would like to base the security of the new batch DGHV scheme on
+the same assumption as the original scheme, \ie the
+Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
+However we can only show its security under the
+(stronger) Error-Free Approximate-GCD assumption already considered in~\cite{CMNT2011,CNT2012}.
+\begin{definition}[Error-free approximate GCD] 
+The $(\rho, \eta,{\gamma})$-error-free Appro\-xi\-ma\-te-GCD pro\-blem
+is: For a random $\eta$-bit prime $p$, given $y_0=q_0\cdot p$
+where $q_0$ is a random integer in $[0,
+  2^{\gamma}/p)$, and polynomially many samples from $\mathcal
+  D_\rho(p,q_0)$, output $p$. 
+\end{definition} 
 
-Given integers $q_0$ and $p_0,\ldots,p_{\ell-1}$, we define the following oracle
+Yet, to prove the semantic security of our scheme, 
+we introduce temporary a new decisional assumption that is implied by the 
+Error-Free Approximate-GCD assumption.
+
+Given integers $q_0$ and $p_0,\ldots,p_{\ell-1}$, we define the oracle
 ${\cal O}_{q_0,(p_i)}(\vec{v})$ which, given as input a vector $\vec{v} \in {\mathbb
   Z}^\ell$, outputs $x$ with
 $$ x = \crt_{q_0,(p_i)}(q,v_0+2r_0,\ldots,v_{\ell-1}+2r_{\ell-1})$$
 where $q \leftarrow [0,q_0)$ and $r_i \leftarrow
-    (-2^\rho,2^\rho)$. We denote by
-$\crt_{q_0,(p_i)}(q,a_0,\ldots,a_{\ell-1})$ the unique
-  integer $u$ smaller than $x_0=q_0 \cdot \prod_{i=0}^{\ell-1} p_i$ such
-  that $u \equiv q~[q_0]$ and $u \equiv a_i~[p_i]$ for
-  all $0 \leq i < \ell$. Therefore ${\cal O}_{q_0,(p_i)}(\vec{v})$
+    (-2^\rho,2^\rho)$. Therefore ${\cal O}_{q_0,(p_i)}(\vec{v})$
     outputs a ciphertext for the plaintext $\vec{v}$. Note that the
     components $v_i$ can be any integer, not only $0,1$.
 
-\begin{definition}[EF-$\ell$-dAGCD$_{\lambda,\gamma,\eta}$] The
-  error-free $\ell$-decisional-approximate-GCD problem is as
+\begin{definition}[O-$\ell$-dAGCD$_{\lambda,\gamma,\eta}$] The
+  oracle $\ell$-decisional-approximate-GCD problem is as
   follows. Pick random $\eta$-bit 
   integers $p_0,\ldots,p_{\ell-1}$ of product $\pi$, a random
   $2^{\lambda^2}$-rough $q_0 \leftarrow \Z \cap  
@@ -804,37 +772,14 @@ error-free $\ell$-decisional-approximate-GCD assumption.
 \end{theorem}
 
 \begin{proof}
-We provide a sketch of the proof. See the proof in the full version~\cite{CLT2013a}.
+We provide a sketch of the proof. See the proof in the full version~\cite{CLT2013a}.\qed
 \end{proof}
 
-
-\subsection{Hardness Assumption}
-
-Ideally we would like to base the security of the new batch DGHV scheme on
-the same assumption as the original scheme, \ie the
-Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
-However we can only show its security under the
-(stronger) error-free Approximate-GCD assumption already considered in~\cite{CMNT2011,CNT2012}.
-
-% For two specific
-%integers $p$ and $q_0$, we use the following distribution over
-%$\gamma$-bit integers:  
-%\[ \mathcal D_\rho(p,q_0) = \left\{ \Choose q\leftarrow [0, q_0),
-%  r\leftarrow \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
-%  \right\}. \] 
-
-\begin{definition}[Error-free approximate GCD] 
-The $(\rho, \eta,{\gamma})$-error-free Appro\-xi\-ma\-te-GCD pro\-blem
-is: For a random $\eta$-bit prime $p$, given $y_0=q_0\cdot p$
-where $q_0$ is a random integer in $[0,
-  2^{\gamma}/p)$, and polynomially many samples from $\mathcal
-  D_\rho(p,q_0)$, output $p$. 
-\end{definition} 
-We prove the following Lemma in Appendix~\ref{p:redsec}.
+Finally, we prove the following Lemma in~\cite[Appendix~C]{CLT2013a}.
 
 \begin{lemma}
 \label{l:redsec}
-The $\ell$-decisional-Approximate-GCD problem is hard if the
+The oracle-$\ell$-decisional-Approximate-GCD problem is hard if the
 error-free-approximate-GCD problem is hard.
 \end{lemma}
 
@@ -896,10 +841,8 @@ of precision after the binary point, and verifies
 \frac{1}{p_j}=\sum_{i=0}^{\Theta-1}
 s_{j,i} \cdot y_{i} + \varepsilon_j \bmod 2
 \end{equation}
-for some $\abs{\varepsilon_j}<2^{-\kappa}$.
-
-Output the secret key $\sk=(\vec s_0,\ldots,\vec s_{\ell-1})$ and public key $\pk=(\pk^*, y_0, \ldots, y_{\Theta-1})$.
-\\\vspace{-0.25cm}
+for some $\abs{\varepsilon_j}<2^{-\kappa}$. Finally, output the key pair
+$$\sk=(\vec s_0,\ldots,\vec s_{\ell-1}) \quad \text{and} \quad \pk = (\pk^*, y_0, \ldots, y_{\Theta-1})\;.$$
 \item[$\BDGHV.\Expand(\pk, c)$.] The ciphertext expansion procedure takes
   as input a ciphertext $c$ and computes an expanded
   ciphertext: for every $0\leq i\leq \Theta-1$, compute $z_i$ given by
@@ -917,7 +860,7 @@ s_{j,i} \cdot z_{i}\right\rceil\right]_2 \oplus
 \end{description}
 This completes the description of the scheme. 
 We
-use $n=\lceil \log_2 (\theta+1) \rceil$ as in~\cite{CMNT2011}; the
+use $n=\lceil \log_2 (\theta+1) \rceil$ as in~\cite{CMNT2011}.\ignore{; the
 proof of the following Lemma is  the same as in~\cite[Appendix~E]{CMNT2011}.
 
 \begin{lemma}The BDGHV encryption scheme is correct for the set $C(\mathcal {P_E})$ of
@@ -929,7 +872,7 @@ pseudo-randomly as in~\cite{CMNT2011},
 except $\ell$ of them in order to satisfy Equation~\eqref{eqpj} for
 all $0 \leq j < \ell$.
 \end{remark}
-
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Bootstrapping}\label{subsec:bootstrapping}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -939,6 +882,7 @@ bootstrappable. Moreover, the $\Recrypt$ procedures works naturally in \emph{par
 a parallel $\Recrypt$ procedure have much greater complications than for this
 scheme.
 
+\ignore{
 In the original DGHV scheme, the decryption equation
 was:
 \begin{equation}
@@ -952,16 +896,17 @@ encryption $\sigma_i$ of every secret-key bit $s_i$; one would obtain a new
 ciphertext which would encrypt the same plaintext bit $m$ but with a
 possibly reduced noise.
 
-Similarly, the decryption equation~\eqref{eq:decrypt} for the batch
+Similarly, t}
+The decryption equation~\eqref{eq:decrypt} for the batch
 scheme can be evaluated homomorphically by providing   for
 all $0 \leq i < \Theta$ an encryption $\sigma_i$ of the $\ell$
 secret-key bits $s_{j,i}$, with:
 \[ {\sigma}_i = \Encrypt(s_{0,i}, \ldots, s_{\ell-1,i}). \]
 This gives a new
 ciphertext that encrypts the same $\ell$-bit plaintext vector,
-but with a (possibly) reduced noise.  In other words, instead of having an
+but with a (possibly) reduced noise.  \ignore{In other words, instead of having an
 homomorphic evaluation of a single 
-equation~\eqref{eq:msz}, we have that the $\ell$ equations 
+equation~\eqref{eq:msz}, we have} Notice that the $\ell$ equations 
 in~\eqref{eq:decrypt} are homomorphically evaluated in parallel, one in
 each of the $\ell$ 
  plaintext slots of the ciphertext. Therefore  the $\Recrypt$
@@ -978,7 +923,6 @@ in~\cite{CMNT2011}.
   $D_{\mathcal E}$ be the set of augmented (squashed) decryption
   circuits. Then $D_{\mathcal E}\subset C(\mathcal{P_E})$. 
 \end{theorem}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Complete Set of Operations for Plaintext Vectors}\label{subsec:permutations}
@@ -1042,7 +986,7 @@ at all.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We provide  in Table~\ref{t:concparams} concrete key sizes and timings
-for the batch DGHV scheme of Section~\ref{sec:batch-error-free}, 
+for the batch DGHV scheme\ignore{ of Section~\ref{sec:batch-error-free}}, 
 based on a C++ implementation using the GMP
 library. We use essentially the same parameters as
 in~\cite{CNT2012,FHEGITHUB}; in particular, the parameters take into
@@ -1057,34 +1001,42 @@ main difference is that the $\Recrypt$ operation is now performed in
 parallel over $\ell=531$ bits (for the ``Large'' setting) instead of a
 single bit. 
 
-\begin{table}[tb]\scriptsize
+\begin{table}[tb]\scriptsize\centering
 
-\qquad\qquad\qquad\qquad\begin{tabular}{|l|c|c||c|c|c|c|c|c|c|c|c||r|}
-\hline 
-\textbf{Instance}&$\lambda$&$\ell$&$\rho$&$\eta$&$\gamma\times 10^{-6}$&$\tau$&$\Theta$&$\pk$ size\\
-\hline
-\hline
-Toy&$42$&$10$&$26$&$988$&$0.29$&$188$&$150$&$647$kB\\\hline
-Small&$52$&$37$&$41$&$1558$&$1.6$&$661$&$555$&$13.3$MB\\\hline
-Medium&$62$&$138$&$56$&$2128$&$8.5$&$2410$&$2070$&$304$MB\\\hline
-Large&$72$&$531$&$71$&$2698$&$39$&$8713$&$7965$&$5.6$GB\\\hline
-\end{tabular}
-
-\medskip
-\qquad\qquad\qquad\qquad\begin{tabular}{|l|c|c|c|c|c|c|}
-\hline 
-\textbf{Instance}&$\KeyGen$&$\Encrypt$&$\Decrypt$&$\Mult$&$\Expand$ & $\Recrypt$\\
-\hline
-\hline
-Toy&$0.06$s&$0.02$s&$0$s&$0.003$s&$0.007$s&$0.11$s\\\hline
-Small&$1.74$s&$0.23$s&$0.02$s&$0.025$s&$0.08$s&$1.10$s\\\hline
-Medium&$73$s&$3.67$s&$0.45$s&$0.16$s&$1.60$s&$11.9$s\\\hline
-Large&$3493$s&$61$s&$9.8$s&$0.72$s&$28$s&$172$s\\\hline
-\end{tabular}\newline
 \caption{Benchmarking for our Batch DGHV with a compressed public key
   on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
 \label{t:concparams}
-  \vspace{-0.5cm}
+\begin{tabular}{|l|c|c||c|c|c|c|c|c|c|c|c||r|}
+\hline 
+\textbf{Instance}&$\lambda$&$\ell$&$\rho$&$\eta$&$\gamma/ 10^{6}$&$\tau$&$\Theta$&$\pk$ size\\
+\hline
+\hline
+%Toy&$42$&$10$&$26$&$988$&$0.16$&$188$&$150$&$647$kB\\\hline
+Small&$52$&$37$&$41$&$1558$&$0.90$&$661$&$555$&$13$ MB\\\hline
+Medium&$62$&$138$&$56$&$2128$&$4.6$&$2410$&$2070$&$304$ MB\\\hline
+Large&$72$&$531$&$71$&$2698$&$21$&$8713$&$7965$&$5.6$ GB\\\hline
+\end{tabular}\begin{tabular}{||c|c|c|c|c|}
+\hline 
+%\textbf{Instance}&
+$\KeyGen$&$\Encrypt$&$\Decrypt$&
+%$\Mult$&
+$\Expand$ & $\Recrypt$\\
+\hline
+\hline
+%Toy&$0.06$s&$0.02$s&$0$s&$0.003$s&$0.007$s&$0.11$s\\\hline
+%Small&
+$1.74$s&$0.23$s&$0.02$s&
+%$0.025$s&
+$0.08$s&$1.10$s\\\hline
+%Medium&
+$73$s&$3.67$s&$0.45$s&
+%$0.16$s&
+$1.60$s&$11.9$s\\\hline
+%Large&
+$3493$s&$61$s&$9.8$s&
+%$0.72$s&
+$28$s&$172$s\\\hline
+\end{tabular}
 \end{table}
 
 
@@ -1135,115 +1087,95 @@ Thus, $\vec m_0$ represents the LSBs
 describe how to implement the AES stages; full details 
 of the implementation are given in~\cite{CLT2013a}. 
 
-\begin{figure}[ht]
+\begin{figure}[bt]
   \centering
   \tikzstyle{int}=[draw, fill=gray!30, minimum size=3em]
   \tikzstyle{init}=[pin edge={to-,thin,black}]
   \begin{tikzpicture}[node distance=6em,auto,>=latex',scale=0.76]
   % Bottom
   
-  \draw (0,1) rectangle (16,2);
+  \draw (0,0.75) rectangle (14.25,2);
   
-  \draw (0,1) rectangle (0.25,2);
-  \node[rotate=90,scale=0.8] at (0.125, 1.5) {\tiny AES 1};
-  \draw (0.25,1) rectangle (0.5,2);
-  \node[rotate=90,scale=0.8] at (0.375, 1.5) {\tiny AES 2};
-  \draw (0.5,1) rectangle (0.75,2);
-  \node[rotate=90,scale=0.8] at (0.625, 1.5) {\tiny AES 3};
-  \draw (0.75,1) rectangle (1.75,2);
-  \node at (1.25, 1.5) {\ldots};
-  \draw (1.75,1) rectangle (2,2);
-  \node[rotate=90,scale=0.8] at (1.875, 1.5) {\tiny AES $k$};
+  \draw (0,0.75) rectangle (0.35,2);
+  \node[rotate=90,scale=0.8] at (0.175, 1.325) {\small AES 1};
+  \draw (0.35,0.75) rectangle (0.7,2);
+  \node[rotate=90,scale=0.8] at (0.525, 1.325) {\small AES 2};
+  \node at (1.1, 1.325) {\ldots};
+  \draw (1.4,0.75) rectangle (1.75,2);
+  \node[rotate=90,scale=0.8] at (1.575, 1.325) {\small AES $k$};
   
-  \draw (2,1) rectangle (2.25,2);
-  \node[rotate=90,scale=0.8] at (2.125, 1.5) {\tiny AES 1};
-  \draw (2.25,1) rectangle (2.5,2);
-  \node[rotate=90,scale=0.8] at (2.375, 1.5) {\tiny AES 2};
-  \draw (2.5,1) rectangle (2.75,2);
-  \node[rotate=90,scale=0.8] at (2.625, 1.5) {\tiny AES 3};
-  \draw (2.75,1) rectangle (3.75,2);
-  \node at (3.25, 1.5) {\ldots};
-  \draw (3.75,1) rectangle (4,2);
-  \node[rotate=90,scale=0.8] at (3.875, 1.5) {\tiny AES $k$};
+  \draw (1.75,0.75) rectangle (2.1,2);
+  \node[rotate=90,scale=0.8] at (1.925, 1.325) {\small AES 1};
+  \draw (2.1,0.75) rectangle (2.45,2);
+  \node[rotate=90,scale=0.8] at (2.275, 1.325) {\small AES 2};
+  \node at (2.85, 1.325) {\ldots};
+  \draw (3.15,0.75) rectangle (3.5,2);
+  \node[rotate=90,scale=0.8] at (3.325, 1.325) {\small AES $k$};
   
-  \draw (4,1) rectangle (4.25,2);
-  \node[rotate=90,scale=0.8] at (4.125, 1.5) {\tiny AES 1};
-  \draw (4.25,1) rectangle (4.5,2);
-  \node[rotate=90,scale=0.8] at (4.375, 1.5) {\tiny AES 2};
-  \draw (4.5,1) rectangle (4.75,2);
-  \node[rotate=90,scale=0.8] at (4.625, 1.5) {\tiny AES 3};
-  \draw (4.75,1) rectangle (5.75,2);
-  \node at (5.25, 1.5) {\ldots};
-  \draw (5.75,1) rectangle (6,2);
-  \node[rotate=90,scale=0.8] at (5.875, 1.5) {\tiny AES $k$};
+  \draw (3.5,0.75) rectangle (3.85,2);
+  \node[rotate=90,scale=0.8] at (3.675, 1.325) {\small AES 1};
+  \draw (3.85,0.75) rectangle (4.2,2);
+  \node[rotate=90,scale=0.8] at (4.025, 1.325) {\small AES 2};
+  \node at (4.6, 1.325) {\ldots};
+  \draw (4.9,0.75) rectangle (5.25,2);
+  \node[rotate=90,scale=0.8] at (5.075, 1.325) {\small AES $k$};
   
-  \draw (6,1) rectangle (6.25,2);
-  \node[rotate=90,scale=0.8] at (6.125, 1.5) {\tiny AES 1};
-  \draw (6.25,1) rectangle (6.5,2);
-  \node[rotate=90,scale=0.8] at (6.375, 1.5) {\tiny AES 2};
-  \draw (6.5,1) rectangle (6.75,2);
-  \node[rotate=90,scale=0.8] at (6.625, 1.5) {\tiny AES 3};
-  \draw (6.75,1) rectangle (7.75,2);
-  \node at (7.25, 1.5) {\ldots};
-  \draw (7.75,1) rectangle (8,2);
-  \node[rotate=90,scale=0.8] at (7.875, 1.5) {\tiny AES $k$};
+  \draw (5.25,0.75) rectangle (5.6,2);
+  \node[rotate=90,scale=0.8] at (5.425, 1.325) {\small AES 1};
+  \draw (5.60,0.75) rectangle (5.95,2);
+  \node[rotate=90,scale=0.8] at (5.775, 1.325) {\small AES 2};
+  \node at (6.35, 1.325) {\ldots};
+  \draw (6.65, 0.75) rectangle (7,2);
+  \node[rotate=90,scale=0.8] at (6.825, 1.325) {\small AES $k$};
+    
+  \node at (8, 1.325) {\ldots};
   
-  \node at (9, 1.5) {\ldots};
+  \draw (9,0.75) rectangle (9.35,2);
+  \node[rotate=90,scale=0.8] at (9.175, 1.325) {\small AES 1};
+  \draw (9.35,0.75) rectangle (9.7,2);
+  \node[rotate=90,scale=0.8] at (9.525, 1.325) {\small AES 2};
+  \node at (10.1, 1.325) {\ldots};
+  \draw (10.4,0.75) rectangle (10.75,2);
+  \node[rotate=90,scale=0.8] at (10.575, 1.325) {\small AES $k$};
   
-  \draw (10,1) rectangle (10.25,2);
-  \node[rotate=90,scale=0.8] at (10.125, 1.5) {\tiny AES 1};
-  \draw (10.25,1) rectangle (10.5,2);
-  \node[rotate=90,scale=0.8] at (10.375, 1.5) {\tiny AES 2};
-  \draw (10.5,1) rectangle (10.75,2);
-  \node[rotate=90,scale=0.8] at (10.625, 1.5) {\tiny AES 3};
-  \draw (10.75,1) rectangle (11.75,2);
-  \node at (11.25, 1.5) {\ldots};
-  \draw (11.75,1) rectangle (12,2);
-  \node[rotate=90,scale=0.8] at (11.875, 1.5) {\tiny AES $k$};
+  \node at (11.625, 1.325) {\ldots};
   
-  \node at (13, 1.5) {\ldots};
-  
-  \draw (14,1) rectangle (14.25,2);
-  \node[rotate=90,scale=0.8] at (14.125, 1.5) {\tiny AES 1};
-  \draw (14.25,1) rectangle (14.5,2);
-  \node[rotate=90,scale=0.8] at (14.375, 1.5) {\tiny AES 2};
-  \draw (14.5,1) rectangle (14.75,2);
-  \node[rotate=90,scale=0.8] at (14.625, 1.5) {\tiny AES 3};
-  \draw (14.75,1) rectangle (15.75,2);
-  \node at (15.25, 1.5) {\ldots};
-  \draw (15.75,1) rectangle (16,2);
-  \node[rotate=90,scale=0.8] at (15.875, 1.5) {\tiny AES $k$};
+  \draw (12.5,0.75) rectangle (12.85,2);
+  \node[rotate=90,scale=0.8] at (12.675, 1.325) {\small AES 1};
+  \draw (12.85,0.75) rectangle (13.2,2);
+  \node[rotate=90,scale=0.8] at (13.025, 1.325) {\small AES 2};
+  \node at (13.6, 1.325) {\ldots};
+  \draw (13.9,0.75) rectangle (14.25,2);
+  \node[rotate=90,scale=0.8] at (14.075, 1.325) {\small AES $k$};
   
   % Middle
-  \draw (0,2) rectangle (2,2.5);
-  \node at (1, 2.25) {Row 0};
-  \draw (0,2) rectangle (4,2.5);
-  \node at (3, 2.25) {Row 1};
-  \draw (0,2) rectangle (6,2.5);
-  \node at (5, 2.25) {Row 2};
-  \draw (0,2) rectangle (8,2.5);
-  \node at (7, 2.25) {Row 3};
-  \draw (0,2) rectangle (10,2.5);
-  \node at (9, 2.25) {\ldots};
-  \draw (0,2) rectangle (12,2.5);
-  \node at (11, 2.25) {Row 0};
-  \draw (0,2) rectangle (14,2.5);
-  \node at (13, 2.25) {\ldots};
-  \draw (0,2) rectangle (16,2.5);
-  \node at (15, 2.25) {Row 3};
+  \draw (0,2) rectangle (1.75,2.5);
+  \node at (0.875, 2.25) {Row 0};
+  \draw (1.75,2) rectangle (3.5,2.5);
+  \node at (2.625, 2.25) {Row 1};
+  \draw (3.5,2) rectangle (5.25,2.5);
+  \node at (4.375, 2.25) {Row 2};
+  \draw (5.25,2) rectangle (7,2.5);
+  \node at (6.125, 2.25) {Row 3};
+  \node at (8, 2.25) {\ldots};
+  \draw (9,2) rectangle (10.75,2.5);
+  \node at (9.875, 2.25) {Row 0};
+  \draw (10.75,2) rectangle (12.5,2.5);
+  \node at (11.625, 2.25) {\ldots};
+  \draw (12.5,2) rectangle (14.25,2.5);
+  \node at (13.375, 2.25) {Row 3};
   
   
   % Top
-  \draw (0,2.5) rectangle (8,3);
-  \node at (4, 2.75) {Column 0};
-  \draw (8,2.5) rectangle (10,3);
-  \node at (9, 2.75) {\ldots};
-  \draw (10,2.5) rectangle (16,3);
-  \node at (13, 2.75) {Column 3};
+  \draw (0,2.5) rectangle (7,3);
+  \node at (3.5, 2.75) {Column 0};
+  \draw (7,2.5) rectangle (9,3);
+  \node at (8, 2.75) {\ldots};
+  \draw (9,2.5) rectangle (14.25,3);
+  \node at (11.625, 2.75) {Column 3};
   \end{tikzpicture}
   \caption{Bit ordering in $\vec m_i$ in the \bwbs{} representation}
   \label{fig:bwbs-state}
-  \vspace{-0.5cm}
 \end{figure}
 
 The $\AddRoundKey$ stage performs a XOR between the AES state and the
@@ -1293,14 +1225,17 @@ $\Add$,  $5120$
 $\Mult$ and $2448$ $\Recrypt$. 
 
 \begin{table}[tb]\centering
-
+\caption{Timings of byte-wise and state-wise homomorphic AES developed in
+  C++ with GMP,
+  running on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
+\label{table:aes-results}
 \subtable[Timings for byte-wise representation]{
 \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
 \hline \textbf{Instance}&$\lambda$&$\ell$&$\#$ of enc.&
 \textsf{Add-}&$\ShiftRows$&\textsf{Mix-}&\textbf{Total AES}&\textbf{Relative}\\
 &&&in parallel&\textsf{RoundKey}&\& $\SubBytes$&\textsf{Columns}&(in hours)&\textbf{time}\\\hline
 \hline
-\textbf{Toy}&$42$&$16$&$1$&$0.006$s&{$2.2$s}&$3$s&$\mathbf{0.013}$&48s\\\hline
+%\textbf{Toy}&$42$&$16$&$1$&$0.006$s&{$2.2$s}&$3$s&$\mathbf{0.013}$&48s\\\hline
 \textbf{Small}&$52$&$48$&$3$&$0.04$s&{$21$s}&$29$s&$\mathbf{0.125}$&2min 30s\\\hline
 \textbf{Medium}&$62$&$144$&$9$&$0.3$s&$210$s&$290$s&$\mathbf{1.25}$&8min 20s\\\hline
 \textbf{Large}&$72$&$528$&$33$&$1.6$s&$2970$s&$4165$s&$\mathbf{18.3}$&33min\\\hline
@@ -1313,17 +1248,13 @@ $\Mult$ and $2448$ $\Recrypt$.
 \hline \textbf{Instance}&$\lambda$&$\ell$&$\#$ of enc.&\textsf{Add-}&\textsf{Sub-}&\textsf{Shift-}&\textsf{Mix-}&\textbf{Total AES}&\textbf{Relative}\\
 &&&in parallel&\textsf{RoundKey}&\textsf{Bytes}&\textsf{Rows}&\textsf{Columns}&(in hours)&\textbf{time}\\\hline
 \hline
-\textbf{Toy}&$42$&$10$&$10$&$0.06$s&$33$s&$0$s&$0.02$s&$\mathbf{0.08}$&$29$s\\\hline
+%\textbf{Toy}&$42$&$10$&$10$&$0.06$s&$33$s&$0$s&$0.02$s&$\mathbf{0.08}$&$29$s\\\hline
 \textbf{Small}&$52$&$37$&$37$&$0.06$s&$309$s&$0$s&$0.09$s&$\mathbf{0.74}$&1min 12s\\\hline
 \textbf{Medium}&$62$&$138$&$138$&$4.5$s&$3299$s&$0$s&$0.44$s&$\mathbf{7.86}$&3min 25s\\\hline
 \textbf{Large}&$72$&$531$&$531$&$27$s&$47656$s&$0.04$s&$2.8$s&$\mathbf{113}$&{12min 46s}\\\hline
 
 \end{tabular}
 }
-\caption{Timings of byte-wise and state-wise homomorphic AES developed in
-  C++ with GMP,
-  running on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
-\label{table:aes-results}
 \end{table}
 
 \paragraph{Implementation Results.} We implemented both variants
