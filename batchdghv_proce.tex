@@ -47,7 +47,9 @@
 \newcommand*{\sk}{\ensuremath{\mathsf{sk}}}
 \newcommand*{\DGHV}{\ensuremath{\mathsf{DGHV}}}
 \newcommand*{\BDGHV}{\ensuremath{\mathsf{BDGHV}}}
-\newcommand*{\CDGHV}{\ensuremath{\mathsf{CDGHV}}}
+\newcommand*{\CDGHV}{\ensuremath{\mathsf{IDGHV}}}
+\newcommand*{\lDACD}{\ensuremath{\ell\textbf{-}\mathbf{DACD}_Q}}
+\newcommand*{\DACD}{\ensuremath{1\textbf{-}\mathbf{DACD}_Q}}
 \newcommand*{\FHE}{\ensuremath{\mathsf{FHE}}}
 
 \newcommand*\AddRoundKey{\ensuremath{\mathsf{AddRoundKey}}}
@@ -528,16 +530,21 @@ determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D_{\rho}(p,q_0
 We give a sketch of the proof of the following lemma. For the detailed proof, see the full version \cite{KLYC2013}. 
 \begin{lemma}
 \label{le:redsec}
-The $\ell$-decisional-Approximate-GCD$_Q$ problem is hard if the
-decisional-approximate-GCD problem is hard.
+The $\ell$-decisional-Approximate-GCD$_Q$ problem is hard under the
+decisional-approximate-GCD assumption.
 \end{lemma}
-\begin{proof}[Sketch]
+\begin{proof}[Sketch] The main difference between $\mathbf{DACD}$ and \DACD\  is the existence of $Q_0$ in the latter problem. When $Q_0$ is coprime to $x_0$, it is easy to see that both problems are equivalent. Namely, multiplying by $Q_0$ modulo $x_0$ efficiently converts samples from $\D_\rho(p,q_0)$ to $\D_\rho(p; Q_0; q_0)$. 
 
+Now, we need to show that \lDACD\ problem is hard under the \DACD\ assumption. Basically, a hybrid argument is used. From the \DACD\ problem instance $x_0=q_0\cdot p$ and samples from $\D_\rho(p; Q_0; q_0)$, we choose $\ell-1$ primes ourselves. Putting a prime $p$ from \DACD\ at a random position $i_0$ among the $p_i$'s, we can construct samples from $\D_{\rho}(\vec{p};\vec{Q};q_0)$ using Chinese Remainder Theorem with samples from $\D_\rho(p; Q_0; q_0)$. And a set $X$ also can be efficiently constructed. For the challenge $z$, we construct a \lDACD\  challenge $z'$ such that 
+\begin{equation*}
+z'=\crt_{x_0,(p_i)_{i\neq i_0}}(z,r_{0}'Q_0,\dots,r_{i_0-1}'Q_{i_0-1},e_{i_0+1}',\dots,e_{\ell-1}') 
+\end{equation*}
+where $r_i'\gets\Z\cap (-2^\rho,2^\rho)$ and $e_i'\gets\Z\cap[0,p_i)$. By the hybrid argument, it can be shown that $\lDACD$ distinguisher can be efficiently converted to a $\DACD$ distinguisher. This terminates the proof of Lemma~\ref{le:redsec}.
 
 \end{proof}
 \begin{corollary}
-The generalized DGHV scheme is semantically secure if the
-decisional-approximate-GCD assumption holds.
+The \CDGHV \ scheme is semantically secure under the
+decisional-approximate-GCD assumption.
 \end{corollary}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
