@@ -381,7 +381,7 @@ addition and multiplications.  Or, if we choose $Q_i$ to be mutually prime, then
 $\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as somewhat homomorphic encryption supporting arithmetic operations
 on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
 
-In order to allow public-key encryption, we provide integers $x'_i$ and $x_j$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$.  Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
+In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$.  Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
 \[
 c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 \]
@@ -464,7 +464,7 @@ Here we show the security of the \CDGHV\ scheme.  In order to prove this, we int
 
 Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \dots, Q_{\ell-1})$ of length $\ell$ and an integer $q_0$, let us define the distribution $\D_\rho(\vec{p}; \vec{Q}; q_0)$ as follows.  The output of the distribution is
 \[
-x=\crt_{q_0,p_1,\dots,p_k}(q,Q_0r_0,\dots,Q_{\ell-1}r_{\ell-1}),
+x=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q,Q_0r_0,\dots,Q_{\ell-1}r_{\ell-1}),
 \]
 where $q\gets\Z\cap[0,q_0)$ and $r_i\gets\Z\cap(-2^\rho,2^\rho)$ for $i=0,\dots,\ell-1$
 
