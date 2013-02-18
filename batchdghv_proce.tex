@@ -103,19 +103,19 @@
 
 \begin{abstract}
 We extend the fully homomorphic encryption scheme over the integers of van
-Dijk~\etal (DGHV) to batch fully homomorphic encryption,
+Dijk~\etal (DGHV) into a batch fully homomorphic encryption scheme,
 \ie~to a scheme that supports encrypting and homomorphically processing a
 vector of plaintexts as a single ciphertext.
 
-We present two variants whose semantic security is based on different
-assumptions. One variants removes the additional noise of the DGHV scheme and
+We present two variants in which the semantic security is based on different
+assumptions. One variant removes the additional noise of the DGHV scheme and
 introduces a new decisional problem, the Decisional Ap\-pro\-xi\-ma\-te-GCD problem,
 whereas the other variant is based on the computational Error-Free
-Approximate-GCD but requires a linear sum with additional public key elements.
+Approximate-GCD problem but requires a linear sum with additional public key elements.
 
 We also show how to perform arbitrary permutations on the underlying plaintext
 vector given the ciphertext and the public key. Our scheme offers competitive
-performance: we describe an implementation of the fully homomorphic evaluation
+performance even with the bootstrapping procedure: we describe an implementation of the homomorphic evaluation
 of AES encryption, with an amortized cost of about 12 minutes per AES
 ciphertext on a standard desktop computer; this is comparable to the timings
 presented by Gentry~\etal at Crypto 2012 for their implementation of a 
@@ -204,7 +204,7 @@ In the original DGHV scheme, a ciphertext has the form
 $$ c= q \cdot p + 2r+m$$
 where $p$ is the secret key, $q$ is a large random integer, and $r$ is
 a small random integer (noise); the bit message $m\in\{0,1\}$ is recovered by computing
-$m=[c \bmod p]_2$.  The scheme is clearly homomorphic for both addition
+$m=[c \bmod p]\bmod 2$.  The scheme is clearly homomorphic for both addition
 and multiplication, since addition and multiplication of ciphertexts
 correspond to addition and multiplication of plaintexts modulo
 $2$. 
@@ -213,13 +213,13 @@ To encrypt multiple bits $m_i$ into a single
 ciphertext $c$, we use the Chinese Remainder
 Theorem with respect to a tuple of $(\ell+1)$ coprime integers $q_0,p_0,\ldots,p_{\ell-1}$. The batch ciphertext has the form
 \[ c = \crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, 2r_0+m_0,\ldots,2r_{\ell-1}+m_{\ell-1}), \]
-and correctly decrypts to the bit vector $(m_i)$ given by $m_i=[c \bmod p_i]_2$ for all $0 \leq i < \ell$.\footnote{We denote by 
+and correctly decrypts to the bit vector $(m_i)$ given by $m_i=[c \bmod p_i]\bmod 2$ for all $0 \leq i < \ell$.\footnote{We denote by 
 $\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q,a_0,\ldots,a_{\ell-1})$ the unique
   integer $u$ smaller than $q_0\cdot\prod_{i=0}^{\ell-1} p_i$ such that $u\bmod q_0=q$ and $u\bmod p_i=a_i$ for
   all $0 \leq i < \ell$.} Modulo each of the $p_i$'s the
 ciphertext $c$ behaves as in the original DGHV scheme. Accordingly, the
 addition or multiplication of two ciphertexts yields a new ciphertext
-that decrypts to the componentwise sum or product mod $2$ of the original
+that decrypts to the componentwise sum or product modulo $2$ of the original
 plaintexts.
 
 The main challenge, however, was to prove the semantic security of our new scheme. In the original DGHV scheme, public-key encryption is
@@ -233,10 +233,10 @@ The semantic security is proved by applying the Leftover Hash Lemma on
 the subset sum, and using the random $2r$ in \eqref{eq:c} to further
 randomize the ciphertext modulo $p$.
 
-In Section~\ref{sec:batch-decisional} we explain how we can circumvent this
+In Section~\ref{sec:batch-decisional} we explain how to circumvent this
 additional noise $2r$ in the classical DGHV scheme by relying on a new
-decisional problem, the Decisional Approximate-GCD. Extending DGHV public-key
-encryption to the batch setting may at first seem straightforward: one can use
+decisional problem, the Decisional Approximate-GCD problem. Extending DGHV public-key
+encryption to the batch setting without this additional noise is easy: one can use
 a similar random subset sum technique in the batch variant by generating
 public key elements $x_j$ with a small residue modulo each of the $p_i$'s
 instead of only modulo $p$. The generalization of the proof to the batch
@@ -245,10 +245,20 @@ can encrypt $\ell=\Ot{\lambda^2}$ bits in a single ciphertext; therefore
 the ciphertext expansion ratio becomes $\Ot{\lambda^3}$ instead of
 $\Ot{\lambda^5}$ in the original scheme.
 
-Unfortunately this approach relies on a \emph{new} decisional problem. In Section~\ref{sec:batch-error-free}, we present a variant of the batch scheme relying on the known Error-Free Approximate-GCD problem, that is a computational problem as in all previous instances of the DGHV schemes~\cite{vDGHV2010,CMNT2011,CNT2012}. For the proof of semantic security to go through, the ciphertext $c$
-should be independently randomized modulo each of the $p_i$'s, which isn't easy to achieve without knowing the $p_i$'s. Indeed, if we only use a single additive term $2r$ as in~\eqref{eq:c}, then the \emph{same} random term $2r=2r \bmod p_i$ is added modulo each of the $p_i$, which breaks the security proof. We provide thus a ``correct'' generalization of the semantic security of DGHV to the batch setting relying on a computational problem. This is
-done by replacing the term $2r$ in
-\eqref{eq:c} by another subset sum of public key elements which, taken
+Unfortunately this approach relies on a \emph{new} decisional problem. In 
+Section~\ref{sec:batch-error-free}, we present a variant of the batch 
+scheme relying on the known Error-Free Approximate-GCD problem, that is a 
+computational problem as in all previous instances of the DGHV 
+schemes~\cite{vDGHV2010,CMNT2011,CNT2012}. For the proof of semantic 
+security to go through, the ciphertext $c$
+should be independently randomized modulo each of the $p_i$'s, which is not 
+easy to achieve without knowing the $p_i$'s. Indeed, if we only use a 
+single additive term $2r$ as in Equation~\eqref{eq:c}, then the \emph{same} random 
+term $2r=2r \bmod p_i$ is added modulo each of the $p_i$, which breaks 
+the security proof. We provide thus a ``correct'' generalization of the 
+semantic security of DGHV to the batch setting relying on a computational 
+problem. This is
+done by replacing the term $2r$ in~\eqref{eq:c} by another subset sum of public key elements which, taken
 modulo each of the $p_i$'s, generate a lattice with special properties.
 Our security proof then applies the Leftover Hash Lemma modulo this
 lattice instead of only modulo $q_0$.
@@ -268,14 +278,14 @@ operation in the original scheme.
 Finally, we describe an implementation of our batch DGHV scheme of Section~\ref{sec:batch-error-free}, with
 concrete parameters. We use our batch DGHV scheme to homomorphically
 evaluate the full AES encryption circuit. For the ``Large'' parameters
-with $\geq72$ bits of security, our implementation  homomorphically
-encrypts up to  $531$ AES ciphertexts in parallel in an amortized $12$
+with $72$ bits of security, our implementation  homomorphically
+encrypts up to  $531$ AES ciphertexts in parallel in an amortized time of $12$
 minutes per AES ciphertext on a desktop computer. This is comparable to
 the timings presented by Gentry~\etal at Crypto 2012 for their
 implementation of an RLWE-based scheme~\cite{GHS2012c}.\footnote{
 Notice that our implementation uses bootstrapping whereas the implementation
-of~\cite{GHS2012c} just used a somewhat homomorphic encryption scheme which
-could cope with a huge depth. }
+of~\cite{GHS2012c} used a somewhat homomorphic encryption scheme which
+could cope with a huge circuit depth. }
 
 While our batch variant of DGHV does not provide additional features nor
 significantly improved efficiency over the RLWE-based scheme of~\cite{GHS2012a}, we believe it is interesting to obtain FHE schemes with
@@ -386,7 +396,7 @@ In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in
 c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 \]
 
-As explained in the Introduction, the additional, larger noise $2r$ from the DGHV scheme is not used in this version.
+As explained in the introduction, the additional, larger noise $2r$ from the DGHV scheme is not used in this version.
 This simplifies the construction, with the tradeoff of a new decisional assumption and larger security loss.  
 In Section~\ref{sec:batch-error-free}, we present another version which handles this issue differently.
 
@@ -416,7 +426,7 @@ $$
 \end{array}
 $$
 
-Finally, let $\pk = \left\langle x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\rangle$ and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
+Finally, let $\pk = \left\{ x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\}$ and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
 \\\vspace{-0.25cm}
 \item[$\CDGHV.\Encrypt(\pk, {\vec{m}})$.] For any $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose random binary vector $\vec{b}=(b_i)_{1\leq i \leq \tau}\in \{0,1\}^\tau$, output the ciphertext:
 \begin{equation}
@@ -477,14 +487,14 @@ $q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\
 The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption then states that this problem is hard for any polynomial time distinguisher.
 
 \begin{theorem}
-The \CDGHV\ scheme is semantically secure under the $l$-decisional approximate $\mathrm{GCD}_Q$ assumption.
+The \CDGHV\ scheme is semantically secure under the $\ell$-decisional approximate $\mathrm{GCD}_Q$ assumption.
 \end{theorem}
 \begin{proof}
 We provide a sketch of the proof.  See the complete proof in the full version~\cite{KLYC2013}.
 
 Essentially, the idea of the proof is that the \CDGHV\ scheme is a lossy encryption~\cite{BHY2009}.  Both the correctly generated public key $\pk$ and the lossy key $\pk'$ have the following form
 \[
-\left\langle x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\rangle,
+\left\{ x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\},
 \]
 but note that, for the real public key $\pk$, $x_i$ are chosen as $x_i\gets\D_\rho(\vec{p}; \vec{Q}; q_0)$,
 and for the lossy public key $\pk'$, $x_i\gets\Z\cap[0,x_0)$.
@@ -561,12 +571,12 @@ scheme. For sake of simplicity, we assume that $Q_0=\cdots=Q_{\ell-1}=2$
 throughout the rest of the paper. Notice however that the security proof of 
 this Section extends easily to general $Q_i$'s as in Section~\ref{sec:batch-decisional}.
 
-We recall that, as mentioned in the Introduction, one cannot add a
+We recall that, as mentioned in the introduction, one cannot add a
 randomization with $2r$ during encryption in the batch scheme (cf.~Equation~\eqref{eq:enccdghv}) as in the DGHV scheme. Indeed, this randomisation does not work because the \emph{same} random term $2r=2r \bmod p_i$ is added
 modulo each of the $p_i$, whereas for the security proof to go through
 these random terms should be independently distributed modulo each of the
 $p_i$'s. Therefore a new technique is required to extend DGHV to
-semantically secure batch encryption.
+a semantically secure batch encryption scheme, whose security is based on the Error-Free Approximate-GCD problem.
 
 \paragraph{Variant of the DGHV Scheme.} In the following, we start by describing a variant of DGHV still for a
 single bit message $m$ only, but which \emph{does} extend naturally to the
@@ -651,7 +661,7 @@ $$
 \end{array}
 $$
 with $r_{i,j}\leftarrow\Z\cap(-2^{\rho'-1}, 2^{\rho'-1})$ and $r'_{i,j}, \varpi_{i,j}\leftarrow\Z\cap(-2^{\rho}, 2^{\rho})$. Finally, let 
-$$\pk = \left\langle x_0, \left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}, \left(\varPi_i\right)_{0\leq i\leq {\ell-1}}\right\rangle$$
+$$\pk = \left\{ x_0, \left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}, \left(\varPi_i\right)_{0\leq i\leq {\ell-1}}\right\}$$
 and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
 
 \item[$\BDGHV.\Encrypt(\pk, \vec{m} \in \{0,1\}^\ell)$.] Choose 
@@ -676,12 +686,11 @@ b_i\cdot x_i\right]_{x_0}.
 
 \label{s:constraints}
 
- The parameters must be
-set under the following constraints:
+ The parameters must meet the following constraints (where $\lambda$ is the security parameter):
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny $\bullet$}
 \itemsep.4em
-\item $\rho \geq 2\lambda$ to avoid brute force attack on the noise~\cite{CN2012},
+\item $\rho = \Omega(\lambda)$ to avoid brute force attack on the noise~\cite{CN2012,CNT2012},
 
 \item $\eta \geq \alpha'+\rho'+1+\log_2(\ell)$ for correct decryption,
 
@@ -692,13 +701,11 @@ set under the following constraints:
   lattice-based attacks (see~\cite{vDGHV2010,CMNT2011});
 
 \item $\rho' \geq \rho + \lambda$ and  $\alpha' \geq \alpha+\lambda$  for
-  the proof of semantic security (see below),
+  the proof of semantic security,
 
 \item $\alpha\cdot \tau\geq \gamma+\lambda$ and $\tau \geq \ell \cdot
   (\rho'+2) + \lambda$ in order to apply the
-  leftover hash lemma (see below).
-%Appendix~\ref{subsec:application-lhl}
-%  and~\cite{vDGHV2010,CMNT2011}).
+  leftover hash lemma.
 \end{itemize}
 
 To satisfy the above constraints one can take $\rho=2\lambda$,
@@ -758,7 +765,7 @@ and $\vec{v}_1\leftarrow
     O}_{q_0,(p_i)}$, guess $b$.
 \end{definition}
  
-The decisional
+This decisional
 problem is therefore to distinguish between an encryption of $0$ and
 an encryption of a random message. To prove semantic security 
 we must show that this  still holds when using the public-key
@@ -768,12 +775,34 @@ encryption procedure instead of the oracle ${\cal
 
 \begin{theorem}\label{thm:l-dAGC}
 The batch DGHV scheme is semantically secure under the
-error-free $\ell$-decisional-approximate-GCD assumption.
+oracle $\ell$-decisional-approximate-GCD assumption.
 \end{theorem}
 
-\begin{proof}
-We provide a sketch of the proof. See the proof in the full version~\cite{CLT2013a}.\qed
-\end{proof}
+We provide a sketch of the proof; see the complete proof in the full version~\cite{CLT2013a}.
+\begin{proof}[Sketch]
+Under the attack scenario the attacker first receives the public key, and outputs two $\ell$-bit messages $\vec m_0$ and $\vec m_1$. The challenger returns an encryption of $\vec m_b$ for a random bit $b$. The attacker finally outputs a guess $b'$ and succeeds if $b' = b$.
+
+First, notice that the public-key elements can be simulated perfectly from the oracle 
+(and thus without knowing the $p_i$'s) by adequate choices for $\vec v$.
+
+We modify the attack scenario by introducing a sequence of games showing that,
+for any efficient adversary, the distribution of the ciphertext $c=\big(
+\sum_{i=0}^{\ell-1}(\vec m_b)_i\cdot x'_i+\sum_{i=1}^\tau b_i\cdot
+x_i+\sum_{i=0}^{\ell-1}b'_i \cdot \varPi_i\big)\bmod x_0$ is
+$\epsilon$-close to $c'=\big(c_O+\xi+\sum_{i=0}^{\ell-1}b'_i\cdot \varPi_i\big)\bmod
+x_0$ for a random $\xi$ modulo the lattice generated by the $\varPi_i$'s, with
+$\epsilon = {\sf negl}(\lambda)+\varepsilon_{\text{O-$\ell$-dAGCD}}$ and $c_O$
+the challenge of the oracle $\ell$-decisional-Approximate-GCD. More precisely,
+by associating (for sake of simplicity) to any $u=\crt_{q_0,(p_i)}(u_q,u_0,\ldots,u_{\ell-1})$ the
+vector $\vec u=(u_q,u_0,\ldots,u_{\ell-1})$, we have $\vec \xi$ uniformly generated
+as a random vector modulo $\vec{\Pi'}$ where the columns of $\vec{\Pi'}$ are
+the vectors $\vec x_0$, $\vec \varPi_0,\ldots,\vec\varPi_{\ell-1}$. To show
+the $\epsilon$-closeness, we use the leftover hash lemma modulo (the finite group) $\Z^\ell/\vec{\Pi'}$
+on the $\sum_{i=1}^\tau b_i\cdot \vec x_i$ in the ciphertext $\vec c$. Notice that, as suggested in the variant of the (single-bit) DGHV scheme presented in this section, the addition $\sum_{i=0}^\ell b'_i\cdot \vec\varPi_i$ in the batch scheme can be seen as adding a large random multiple of the basis of $\vec {\Pi'}$.
+
+Finally $c'$ has no information on $\vec m_b$, and therefore her guess $b'$ 
+is such that $\Pr[b'=b]=1/2$. Therefore, when the oracle-$\ell$-decisional-Approximate-GCD 
+problem is hard, she cannot have a non-negligible advantage against the scheme.\qed\end{proof}
 
 Finally, we prove the following Lemma in~\cite[Appendix~C]{CLT2013a}.
 
@@ -855,7 +884,7 @@ with $n$ bits of precision after the binary point. Define the vector $\vec z=(z_
 \label{eq:decrypt}
 m_j \leftarrow\left[\left\lfloor\sum_{i=0}^{\Theta-1}
 s_{j,i} \cdot z_{i}\right\rceil\right]_2 \oplus
-(c \bmod 2). 
+(c \bmod 2)\;. 
 \end{equation}
 \end{description}
 This completes the description of the scheme. 
@@ -901,7 +930,7 @@ The decryption equation~\eqref{eq:decrypt} for the batch
 scheme can be evaluated homomorphically by providing   for
 all $0 \leq i < \Theta$ an encryption $\sigma_i$ of the $\ell$
 secret-key bits $s_{j,i}$, with:
-\[ {\sigma}_i = \Encrypt(s_{0,i}, \ldots, s_{\ell-1,i}). \]
+\[ {\sigma}_i = \Encrypt(s_{0,i}, \ldots, s_{\ell-1,i})\;. \]
 This gives a new
 ciphertext that encrypts the same $\ell$-bit plaintext vector,
 but with a (possibly) reduced noise.  \ignore{In other words, instead of having an
@@ -909,15 +938,14 @@ homomorphic evaluation of a single
 equation~\eqref{eq:msz}, we have} Notice that the $\ell$ equations 
 in~\eqref{eq:decrypt} are homomorphically evaluated in parallel, one in
 each of the $\ell$ 
- plaintext slots of the ciphertext. Therefore  the $\Recrypt$
-operation is done in parallel over the 
-$\ell$ slots, with the same complexity as a single $\Recrypt$
-operation in the original scheme.
+ plaintext slots of the ciphertext. Therefore, with the same complexity as a single $\Recrypt$
+operation in the original scheme, this batch $\Recrypt$
+operation is performed in parallel over the 
+$\ell$ slots.
 
 From Gentry's theorem, we obtain a homomorphic encryption scheme for
 circuits of any depth. The proof of the following theorem is identical
-to the proof of Theorem~5.1
-in~\cite{CMNT2011}.
+to the proof of~\cite[Theorem~5.1]{CMNT2011}.
 
 \begin{theorem}Let $\mathcal E$ be the above scheme, and let
   $D_{\mathcal E}$ be the set of augmented (squashed) decryption
@@ -952,7 +980,7 @@ can be implemented by putting the corresponding $\sigma^\zeta_i$'s in the public
 
 To be able to perform arbitrary permutations on the plaintext vector, one
 can augment the public key by a minimal set of permutations $\zeta$'s
-that generates the whole permutation group $\mathfrak S_\ell$, such as
+that generates the whole permutation group $\mathfrak S_\ell$ over $\{0,\ldots,\ell-1\}$, such as
 the transposition $(1,2)$ and the cycle $(1,2,\ldots,\ell)$. In that case
 the impact on the public key is small (as only $2\cdot \Theta\cdot
 \gamma$ bits are added), but the performance overhead is significant,
@@ -1051,7 +1079,7 @@ concrete timings. A similar
 implementation with
  the RLWE-based 
 fully-homomorphic encryption scheme~\cite{BV2011a,BV2011b,GHS2012a} is
-described in~\cite{GHS2012c}. 
+discussed in~\cite{GHS2012c}. 
 As mentioned 
 in~\cite{SV2011,NLV2011,GHS2012c}, such an implementation can be used to
 optimize the communication cost in cloud-based
@@ -1073,10 +1101,10 @@ variants of our implementation which we call \emph{\bwbs} and
 \paragraph{Byte-Wise Bitslicing.} In this representation, the
 $16$-byte AES state is viewed as a matrix of $16$ rows of $8$ bits
 each (one row for every byte). Each of the $8$ columns is then stored on a different
-ciphertext. Therefore an AES state requires $16$ slots of $8$
+ciphertext. Therefore an AES state is stored in $8$
 ciphertexts, and one can perform
 $k=\ell/16$ AES encryptions in parallel using these $8$
-ciphertexts. Formally the AES state is composed of $8$ ciphertexts $c_0,\ldots,c_7$, where
+ciphertexts. Formally the AES state is composed of the ciphertexts $c_0,\ldots,c_7$, where
 the underlying plaintexts $\vec m_0,\ldots,\vec m_7$ are such that
 $\vec m_i[k\cdot 16+j]$ is the $i$-th bit of the $j$-th element of the AES
 state of the $k$-th AES (see Figure~\ref{fig:bwbs-state}).\footnote{
@@ -1084,8 +1112,8 @@ Thus, $\vec m_0$ represents the LSBs
   of the AES states of the $k$ AES-plaintexts, and $\vec m_7$ the
   MSBs. This construction is similar to general-purpose
   bitslicing~\cite{Bih1997,KS2009}.} We briefly
-describe how to implement the AES stages; full details 
-of the implementation are given in~\cite{CLT2013a}. 
+describe how to implement the AES stages; full detail 
+on the implementation are given in~\cite{CLT2013a}. 
 
 \begin{figure}[bt]
   \centering
@@ -1182,10 +1210,14 @@ The $\AddRoundKey$ stage performs a XOR between the AES state and the
 current round key. This operation only consists of $8$ $\Add$
 operations.  
 To minimize the
-number of $\Recrypt$, we perform the $\Recrypt$ operation only on $9$ of
+number of $\Recrypt$ during the $\SubBytes$ stage, we used the $115$ gates circuit of
+Boyar and Peralta~\cite{BP2010} to compute the Sbox.\footnote{To minimize the number of bootstrappings in a given circuit we refer to~\cite{LP2013}.} 
+Thus, this step needs $17$
+$\Recrypt$ operations
+on $9$ of
 the temporary variables and on the $8$ outputs. In total, this stage
 costs $83$ $\Add$, $32$ $\Mult$ and $17$
-$\Recrypt$. In order to compute the \emph{minimal} number of $\Recrypt$ needed to homomorphically evaluate a given circuit, we refer you to~\cite{LP2013}.
+$\Recrypt$.
 
 The $\ShiftRows$ stage consists in performing a permutation of the
 state. For this we add the $\sigma^\zeta_i$'s of the associated
@@ -1193,7 +1225,7 @@ permutation $\zeta$ in the public key, and the rotation is performed
 at no additional cost during the final $\Recrypt$ of the $\SubBytes$
 stages. 
 Finally the $\MixColumns$ stage requires $3$ permutations of the AES
-state; it requires a total of $3\times 8=24$ $\Recrypt$
+state; this yields a total of $3\times 8=24$ $\Recrypt$
 and $38$ $\Add$, and the addition of the $\sigma^\zeta_i$'s of
 three permutations $\zeta$ to the public key. 
 
@@ -1267,7 +1299,7 @@ yields  better relative times.
 
 Our timings are comparable to~\cite{GHS2012c} for the RLWE-based scheme, where a relative time of $5$ minutes per block is
 reported; the authors used a $24$-core server with 256GB of RAM, while
-our program runs on a more modest desktop computer with 4 cores and
+our program runs on a more modest desktop computer with 4 hyperthreaded cores and
 32GB of RAM (the whole public key fits in RAM).
 We claim a slightly lower security level, however: $72$ bits versus $80$
 bits for the implementation from~\cite{GHS2012c}.
