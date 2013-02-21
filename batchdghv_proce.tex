@@ -1,4 +1,4 @@
-\documentclass[11pt]{llncs}
+\documentclass{llncs}
 
 \usepackage{amsmath,amsfonts,amssymb}
 
@@ -108,9 +108,9 @@ Dijk~\etal (DGHV) into a batch fully homomorphic encryption scheme,
 vector of plaintexts as a single ciphertext.
 
 We present two variants in which the semantic security is based on different
-assumptions. One variant removes the additional noise of the DGHV scheme and
-introduces a new decisional problem, the Decisional Ap\-pro\-xi\-ma\-te-GCD problem,
-whereas the other variant is based on the computational Error-Free
+assumptions. The first variant is based on a new decisional problem,
+the Decisional Ap\-pro\-xi\-ma\-te-GCD problem,  
+whereas the second variant is based on the more classical computational Error-Free
 Approximate-GCD problem but requires a linear sum with additional public key elements.
 
 We also show how to perform arbitrary permutations on the underlying plaintext
@@ -180,7 +180,7 @@ three main families of fully homomorphic encryption schemes are known:
 \smallskip
 
 \item Brakerski and Vaikuntanathan's scheme based on the Learning with
-  Errors (LWE) and Ring Learning with Errors (RLWE)
+  Errors (LWE)  and Ring Learning with Errors (RLWE)
   problems~\cite{BV2011a,BV2011b}, and follow-up works (\eg the scale-free variant of Brakerski~\cite{Bra2012} and the NTRU-variant~\cite{LTV2012}). An implementation is described in~\cite{GHS2012c} with an 
   efficient (given the current state of knowledge)
   homomorphic evaluation of the full AES encryption circuit.  The
@@ -194,7 +194,8 @@ three main families of fully homomorphic encryption schemes are known:
 \subsubsection{Our Contributions.} 
 
 In this paper we focus on the DGHV scheme. Our goal is to extend DGHV to
-support the same batching capability~\cite{SV2011} as in RLWE-based
+support the same batching capability %~\cite{SV2011} 
+as in RLWE-based
 schemes~\cite{BV2011a,BV2011b}, and to homomorphically evaluate a full AES
 circuit with roughly the same level of efficiency as~\cite{GHS2012c}, in
 order to obtain an implementation of a FHE scheme with similar features
@@ -215,12 +216,14 @@ Theorem with respect to a tuple of $(\ell+1)$ coprime integers $q_0,p_0,\ldots,p
 \[ c = \crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, 2r_0+m_0,\ldots,2r_{\ell-1}+m_{\ell-1}), \]
 and correctly decrypts to the bit vector $(m_i)$ given by $m_i=[c \bmod p_i]\bmod 2$ for all $0 \leq i < \ell$.\footnote{We denote by 
 $\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q,a_0,\ldots,a_{\ell-1})$ the unique
-  integer $u$ smaller than $q_0\cdot\prod_{i=0}^{\ell-1} p_i$ such that $u\bmod q_0=q$ and $u\bmod p_i=a_i$ for
+  integer $u$ smaller than $q_0\cdot\prod_{i=0}^{\ell-1} p_i$ such
+  that $u \equiv q \pmod{q_0}$ and $u \equiv a_i \pmod{p_i}$ for
   all $0 \leq i < \ell$.} Modulo each of the $p_i$'s the
 ciphertext $c$ behaves as in the original DGHV scheme. Accordingly, the
 addition or multiplication of two ciphertexts yields a new ciphertext
 that decrypts to the componentwise sum or product modulo $2$ of the original
 plaintexts.
+
 
 The main challenge, however, was to prove the semantic security of our new scheme. In the original DGHV scheme, public-key encryption is
 performed by masking the message $m$ with a random subset sum of the
@@ -233,59 +236,60 @@ The semantic security is proved by applying the Leftover Hash Lemma on
 the subset sum, and using the random $2r$ in \eqref{eq:c} to further
 randomize the ciphertext modulo $p$.
 
-In Section~\ref{sec:batch-decisional} we explain how to circumvent this
-additional noise $2r$ in the classical DGHV scheme by relying on a new
-decisional problem, the Decisional Approximate-GCD problem. Extending DGHV public-key
-encryption to the batch setting without this additional noise is easy: one can use
-a similar random subset sum technique in the batch variant by generating
-public key elements $x_j$ with a small residue modulo each of the $p_i$'s
-instead of only modulo $p$. The generalization of the proof to the batch
-scheme is then straightforward. We show that our batch DGHV scheme
+To prove semantic security for the batch scheme our first technique in
+Section~\ref{sec:batch-decisional} is
+to rely on a new assumption, namely the Decisional Approximate-GCD 
+assumption. Under this assumption the integers $x_j$ is the subset-sum
+from (\ref{eq:c}) are assumed to be indistinguishable from random
+modulo $x_0$; semantic security is then proved by applying the Leftover
+Hash Lemma modulo $x_0$; the additional random $2r$ in \eqref{eq:c} becomes
+unnecessary. Extending DGHV public-key
+encryption to the batch setting is then straightforward; namely one can use
+the same random subset sum technique with
+public key elements $x_j$ having a small residue modulo each of the $p_i$'s
+instead of only modulo $p$. We show that our batch DGHV scheme
 can encrypt $\ell=\Ot{\lambda^2}$ bits in a single ciphertext; therefore
 the ciphertext expansion ratio becomes $\Ot{\lambda^3}$ instead of
 $\Ot{\lambda^5}$ in the original scheme.
 
-Unfortunately this approach relies on a \emph{new} decisional problem. In 
-Section~\ref{sec:batch-error-free}, we present a variant of the batch 
-scheme relying on the known Error-Free Approximate-GCD problem, that is a 
-computational problem as in all previous instances of the DGHV 
-schemes~\cite{vDGHV2010,CMNT2011,CNT2012}. For the proof of semantic 
-security to go through, the ciphertext $c$
+In Section~\ref{sec:batch-error-free} we describe a different
+technique that does not rely on a new decisional assumption but on the known  (computational)
+Error-Free Approximate-GCD asssumption used in previous
+work~\cite{vDGHV2010,CMNT2011,CNT2012}. For the proof of semantic 
+security to go through in the batch setting, the ciphertext $c$
 should be independently randomized modulo each of the $p_i$'s, which is not 
 easy to achieve without knowing the $p_i$'s. Indeed, if we only use a 
 single additive term $2r$ as in Equation~\eqref{eq:c}, then the \emph{same} random 
 term $2r=2r \bmod p_i$ is added modulo each of the $p_i$, which breaks 
-the security proof. We provide thus a ``correct'' generalization of the 
-semantic security of DGHV to the batch setting relying on a computational 
-problem. This is
-done by replacing the term $2r$ in~\eqref{eq:c} by another subset sum of public key elements which, taken
+the security proof. Our technique is to replace
+the term $2r$ in~\eqref{eq:c} by another subset sum of public key elements which, taken
 modulo each of the $p_i$'s, generate a lattice with special properties.
-Our security proof then applies the Leftover Hash Lemma modulo this
-lattice instead of only modulo $q_0$.
+We then apply the Leftover Hash Lemma modulo this
+lattice instead of only modulo $q_0$, which proves semantic security.
 
 In addition to componentwise addition and multiplication, we also show
 how to perform any permutation on plaintext bits publicly. As opposed
-to~\cite{BGV2012,GHS2012a}, we cannot use an underlying algebraic
+to RLWE based schemes~\cite{BGV2012,GHS2012a}, we cannot use an underlying algebraic
 structure to perform rotations over plaintext bits (clearly, the
 automorphisms of $\Z$ do not provide any useful action on ciphertexts).
 Instead we show how to perform arbitrary permutations on the plaintext
 vector during the ciphertext refresh operation at no additional cost (but with
-a slight increase of the public key size). Notice also that the $\Recrypt$
-operation is done in parallel over the 
+a slight increase of the public key size). Our ciphertext refresh
+operation $\Recrypt$ is done in parallel over the 
 $\ell$ slots, with the same complexity as a single $\Recrypt$
 operation in the original scheme.
 
 Finally, we describe an implementation of our batch DGHV scheme of Section~\ref{sec:batch-error-free}, with
-concrete parameters. We use our batch DGHV scheme to homomorphically
-evaluate the full AES encryption circuit. For the ``Large'' parameters
+concrete parameters. We perform an homomorphic evaluation of
+the full AES encryption circuit. For the ``Large'' parameters
 with $72$ bits of security, our implementation  homomorphically
 encrypts up to  $531$ AES ciphertexts in parallel in an amortized time of $12$
 minutes per AES ciphertext on a desktop computer. This is comparable to
 the timings presented by Gentry~\etal at Crypto 2012 for their
 implementation of an RLWE-based scheme~\cite{GHS2012c}.\footnote{
 Notice that our implementation uses bootstrapping whereas the implementation
-of~\cite{GHS2012c} used a somewhat homomorphic encryption scheme which
-could cope with a huge circuit depth. }
+of~\cite{GHS2012c} used a leveled homomorphic encryption scheme
+without bootstrapping.}
 
 While our batch variant of DGHV does not provide additional features nor
 significantly improved efficiency over the RLWE-based scheme of~\cite{GHS2012a}, we believe it is interesting to obtain FHE schemes with
@@ -1305,7 +1309,7 @@ We claim a slightly lower security level, however: $72$ bits versus $80$
 bits for the implementation from~\cite{GHS2012c}.
 
 %
-\bibliographystyle{plain}
+\bibliographystyle{alpha}
 \bibliography{batchdghv}
 
 \end{document}
