@@ -301,7 +301,7 @@ similar properties but based on different techniques and assumptions.
 \label{sec:dghv}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section, we recall the somewhat homomorphic encryption scheme
+We first recall the somewhat homomorphic encryption scheme
 over the integers of van Dijk, Gentry, Halevi and
 Vaikuntanathan (DGHV) in~\cite{vDGHV2010}. Let $\lambda$ be the
 security parameter, $\tau$ be the number of elements in the public
@@ -353,7 +353,6 @@ $m + m' \bmod 2$ under a $(\rho'+1)$-bit noise and the ciphertext $c \cdot
 c'$ is an encryption of $m \cdot m'$ with noise bit-length $\simeq
 2 \rho'$. Since the ciphertext noise must remain smaller than $p$ to maintain correctness, 
 the scheme roughly allows $\eta/\rho'$ successive multiplications on ciphertexts.
-
 The scheme is semantically secure under the Approximate-GCD assumption
 (see~\cite{vDGHV2010}):
 
@@ -375,12 +374,15 @@ The scheme is semantically secure under the Approximate-GCD assumption
 %\end{itemize}
 
 We describe our first extension of the DGHV scheme for the batch setting.  We extend the DGHV scheme
-by packing $\ell$ plaintexts $m_0$, \dots, $m_{\ell-1}$ into a single ciphertext, using Chinese Remainder
+by packing $\ell$ plaintexts $m_0$, \dots, $m_{\ell-1}$ into a single
+ciphertext, using the Chinese Remainder
 Theorem.  Moreover, for somewhat homomorphic encryption, this allows us to encrypt not only bits
 but elements from rings of form $\Z_Q$.
 
-Therefore, we encrypt $(m_0, \dots, m_{\ell-1})\in\Z_{Q_0}\times\cdots\times\Z_{Q_{\ell-1}}$ into a ciphertext
-of following form:
+Therefore, for public parameters $Q_0,\ldots,Q_{\ell-1}$, we encrypt
+$(m_0, \dots, m_{\ell-1})\in\Z_{Q_0}\times\cdots\times\Z_{Q_{\ell-1}}$
+into a ciphertext 
+of the following form:
 \[
 c=\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, Q_0 r_0+m_0,\ldots,Q_{\ell-1}r_{\ell-1}+m_{\ell-1}),
 \]
@@ -407,6 +409,13 @@ In Section~\ref{sec:batch-error-free}, we present another version which handles 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For a real number
+$x$, we denote by $\lceil x \rceil$, $\lfloor x \rfloor$ and $\lceil x
+\rfloor$ the upper, lower or nearest integer part of $x$. For
+integers $z$, $p$ we denote the reduction of $z$ modulo $p$ by
+$(z\bmod p)$ or $[z]_p$ with $-p/2 < [z]_p \leq p/2$.
+
 \begin{description}\label{CDGHV}
 \item[$\CDGHV.\KeyGen(1^\lambda,(Q_j)_{0\leq j <\ell})$.] Choose $\eta$-bit distinct primes $p_j$, $0\leq j<\ell$, and denote $\pi$
 their product. Let us define the error-free public key element
@@ -430,9 +439,14 @@ $$
 \end{array}
 $$
 
-Finally, let $\pk = \left\{ x_0, \left(Q_i\right)_{0\leq i \leq \ell-1},\left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}\right\}$ and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
+Finally, let $\pk = \left\{ x_0, \left(Q_i\right)_{0\leq i \leq
+  \ell-1},\left(x_i\right)_{1\leq i\leq \tau},\left(x'_i\right)_{0\leq i\leq \ell-1}\right\}$ 
+and let $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
 \\\vspace{-0.25cm}
-\item[$\CDGHV.\Encrypt(\pk, {\vec{m}})$.] For any $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose random binary vector $\vec{b}=(b_i)_{1\leq i \leq \tau}\in \{0,1\}^\tau$, output the ciphertext:
+\item[$\CDGHV.\Encrypt(\pk, {\vec{m}})$.] For any
+  $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose
+  random binary vector $\vec{b}=(b_i)_{1\leq i \leq \tau}\in
+  \{0,1\}^\tau$ and output the ciphertext:
 \begin{equation}
 \label{eq:enccdghv}
 c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i + 
@@ -448,16 +462,19 @@ b_i\cdot x_i\right]_{x_0}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parameters and Correctness}\label{parameter}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Roughly speaking, $\ell$ determines the size of the message space.
-The binary length of $Q_j$ can be an integer from $2$ to $\eta/8$ depending on the multiplicative depth of the scheme. The details of analysis are given in Appendix~\ref{app:correctness}.
-The parameters should satisfy the following constraints: 
+The size of the message space is determined by $\ell$ and the binary
+length of the $Q_j$'s, which can be an integer from $2$ to $\eta/8$
+depending on the multiplicative depth of the scheme. The details of
+analysis are given in Appendix~\ref{app:correctness}. 
+The parameters should satisfy the following constraints:  
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny $\bullet$}
 \itemsep.4em
 \item $\rho=\tilde{\mathcal{O}}(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
 \item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987} and to permit enough multiplicative depth (in Appendix~\ref{app:correctness}),
 \item $\gamma=\eta^2\omega(\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
-\item $\tau=\gamma+\omega(\log\lambda)$, in order to use left-over hash lemma in the security proof which is given in Section~\ref{reduce_acd}.
+\item $\tau=\gamma+\omega(\log\lambda)$, in order to use left-over
+  hash lemma (see Section~\ref{reduce_acd}).
 \end{itemize}
 We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5), \eta=\tilde{\mathcal{O}}(\lambda^2),
 \rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. We remark that $b_i$ can be chosen in the much larger interval so as to reduce the public key size as in Section~\ref{sec:batch-error-free}. 
@@ -474,7 +491,11 @@ The above scheme is correct for $\mathcal{C_E}$.
 \subsection{Semantic Security}\label{reduce_acd}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Here we show the security of the \CDGHV\ scheme.  In order to prove this, we introduce a new assumption called $\ell$-$\mathbf{DACD}_Q$, and give a security proof based on this assumption.  In fact, this rather complicated assumption is given only as an intermediate step for the proof, and in Section~\ref{decisional_assumption}, we prove this assumption from a simpler decisional assumption.
+Here we show the semantic security of the \CDGHV\ scheme, based on a
+new assumption called $\ell$-$\mathbf{DACD}_Q$.  In fact, this rather
+complicated assumption is given only as an intermediate step for the
+proof, and in Section~\ref{decisional_assumption}, we prove this
+assumption from a simpler decisional assumption. 
 
 Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \dots, Q_{\ell-1})$ of length $\ell$ and an integer $q_0$, let us define the distribution $\D_\rho(\vec{p}; \vec{Q}; q_0)$ as follows.  The output of the distribution is
 \[
@@ -503,17 +524,21 @@ Essentially, the idea of the proof is that the \CDGHV\ scheme is a lossy encrypt
 but note that, for the real public key $\pk$, $x_i$ are chosen as $x_i\gets\D_\rho(\vec{p}; \vec{Q}; q_0)$,
 and for the lossy public key $\pk'$, $x_i\gets\Z\cap[0,x_0)$.
 
-Now we may rely on the standard hybrid argument to show that $\pk$ and $\pk'$ are computationally indistinguishable, under the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption: for each $\hat\i\in\{1, \dots, \tau\}$, we define $\pk^{(\hat\i)}$, where
+Now we may rely on the standard hybrid argument to show that $\pk$ and $\pk'$ are computationally indistinguishable, under the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption: for each $\hat\imath\in\{1, \dots, \tau\}$, we define $\pk^{(\hat\imath)}$, where
 \[
 x_i \gets \begin{cases}
-\Z\cap[0,x_0)&\text{for $i\leq \hat\i$},\\
-\D_\rho(\vec{p}; \vec{Q}; q_0)&\text{for $i>\hat\i$}.
+\Z\cap[0,x_0)&\text{for $i\leq \hat\imath$},\\
+\D_\rho(\vec{p}; \vec{Q}; q_0)&\text{for $i>\hat\imath$}.
 \end{cases}
 \]
-Then $\pk^{(0)}$ is identical as $\pk$, and $\pk^{(\tau)}$ is identical as $\pk'$, and using the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption, we may show that $\pk^{(\hat\i)}$ is indistinguishable from $\pk^{(\hat\i+1)}$ for $\hat\i=0$, \dots, $\tau-1$,
+Then $\pk^{(0)}$ is identical as $\pk$, and $\pk^{(\tau)}$ is identical as $\pk'$, and using the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption, we may show that $\pk^{(\hat\imath)}$ is indistinguishable from $\pk^{(\hat\imath+1)}$ for $\hat\imath=0$, \dots, $\tau-1$,
 proving that $\pk$ and $\pk'$ are computationally indistinguishable.
 
-Next, we show that under the lossy key $\pk'$, the \CDGHV\ scheme is secure statistically: for any two plaintexts $\vec{m}$ and $\vec{m}'$, the distributions of their corresponding ciphertexts $c$, $c'$ under the lossy key $\pk'$ are statistically close.  Recall that from equation~\ref{eq:enccdghv}, we have
+Next, we show that under the lossy key $\pk'$, the \CDGHV\ scheme is
+secure statistically: for any two plaintexts $\vec{m}$ and $\vec{m}'$,
+the distributions of their corresponding ciphertexts $c$, $c'$ under
+the lossy key $\pk'$ are statistically close.  Recall that from
+equation (\ref{eq:enccdghv}), we have
 \begin{equation*}
 c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i + 
 	\sum_{i=1}^\tau 
@@ -526,7 +551,9 @@ Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are uniform on
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Hardness Assumption}\label{decisional_assumption}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The semantic security of our scheme is based on a new decisional assumption of approximate GCD problem. 
+
+We show that the semantic securty of our scheme can be based on a
+simpler decisional assumption with a single prime $p$. 
 %In fact, decisional approximate GCD is considered by Coron et al[] for the first time.
  For two specific
 integers $p$ and $q_0$, we use the following distribution over
@@ -550,7 +577,15 @@ decisional-approximate-GCD assumption.
 \end{lemma}
 \begin{proof}[Sketch] The main difference between $\mathbf{DACD}$ and \DACD\  is the existence of $Q_0$ in the latter problem. When $Q_0$ is coprime to $x_0$, it is easy to see that both problems are equivalent. Namely, multiplying by $Q_0$ modulo $x_0$ efficiently converts samples from $\D_\rho(p,q_0)$ to $\D_\rho(p; Q_0; q_0)$. 
 
-Now, we need to show that \lDACD\ problem is hard under the \DACD\ assumption. Basically, a hybrid argument is used. From the \DACD\ problem instance $x_0=q_0\cdot p$ and samples from $\D_\rho(p; Q_0; q_0)$, we choose $\ell-1$ primes ourselves. Putting a prime $p$ from \DACD\ at a random position $i_0$ among the $p_i$'s, we can construct samples from $\D_{\rho}(\vec{p};\vec{Q};q_0)$ using Chinese Remainder Theorem with samples from $\D_\rho(p; Q_0; q_0)$. And a set $X$ also can be efficiently constructed. For the challenge $z$, we construct a \lDACD\  challenge $z'$ such that 
+Now, we need to show that the \lDACD\ problem is hard under the
+\DACD\ assumption. We use a hybrid argument. From the
+\DACD\ problem instance $x_0=q_0\cdot p$ and samples from $\D_\rho(p;
+Q_0; q_0)$, we choose $\ell-1$ primes ourselves. Putting a prime $p$
+from \DACD\ at a random position $i_0$ among the $p_i$'s, we can
+construct samples from $\D_{\rho}(\vec{p};\vec{Q};q_0)$ using the Chinese
+Remainder Theorem with samples from $\D_\rho(p; Q_0; q_0)$. And a set
+$X$ also can be efficiently constructed. For the challenge $z$, we
+construct a \lDACD\  challenge $z'$ such that  
 \begin{equation*}
 z'=\crt_{x_0,(p_i)_{i\neq i_0}}(z,r_{0}'Q_0,\dots,r_{i_0-1}'Q_{i_0-1},e_{i_0+1}',\dots,e_{\ell-1}') 
 \end{equation*}
