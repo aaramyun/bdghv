@@ -601,23 +601,53 @@ decisional-approximate-GCD assumption.
 \section{Batch DGHV Scheme Based on the Error-Free Approximate-GCD}\label{sec:batch-error-free}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section, we present a generalization of the $\CDGHV$ scheme based on 
-the \emph{computational} Error-Free Approximate-GCD problem already used 
-in~\cite{vDGHV2010,CMNT2011,CNT2012} rather than on the Decisional 
-Approximate-GCD problem (Definition~\ref{def:dagcd}). This is made possible 
+In this section, we present a variant of the previous $\CDGHV$ scheme
+but based on a (weaker) \emph{computational} assumption instead of the
+decisional assumption from Def.~\ref{def:dagcd}. This is made possible 
 by adding a new set of elements in the public key but yields a more intricate 
-scheme. For sake of simplicity, we assume that $Q_0=\cdots=Q_{\ell-1}=2$ 
-throughout the rest of the paper. Notice however that the security proof of 
-this Section extends easily to general $Q_i$'s as in Section~\ref{sec:batch-decisional}.
+scheme.\footnote{For the sake of simplicity, we use
+  $Q_0=\cdots=Q_{\ell-1}=2$  
+throughout the rest of the paper; however the security proof extends
+to general $Q_i$'s as in Section~\ref{sec:batch-decisional}.}
 
-We recall that, as mentioned in the introduction, one cannot add a
-randomization with $2r$ during encryption in the batch scheme (cf.~Equation~\eqref{eq:enccdghv}) as in the DGHV scheme. Indeed, this randomisation does not work because the \emph{same} random term $2r=2r \bmod p_i$ is added
+Ideally we would like to base the security of the new batch DGHV scheme on
+the same assumption as the original single-bit DGHV scheme, \ie the
+Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
+However we can only show its security under the
+(stronger) Error-Free Approximate-GCD assumption already considered
+in~\cite{vDGHV2010,CMNT2011,CNT2012}. 
+\begin{definition}[Error-free approximate GCD] 
+The $(\rho, \eta,{\gamma})$-error-free Ap\-pro\-xi\-ma\-te-GCD pro\-blem
+is: For a random $\eta$-bit prime $p$, given $y_0=q_0\cdot p$
+where $q_0$ is a random integer in $[0,
+  2^{\gamma}/p)$, and polynomially many samples from $\mathcal
+  D_\rho(p,q_0)$, output $p$. 
+\end{definition} 
+
+In the following we briefly explain our proof strategy. 
+ In the original DGHV scheme, public-key encryption is
+performed by masking the message $m$ with a random subset sum of the
+public key elements $x_j=q_j \cdot p + r_j$ as
+\begin{equation}
+\label{eq:c2}
+c = \bigg[ m+2r+2 \sum\limits_{j \in S} x_j \bigg]_{x_0}\;.
+\end{equation}
+The semantic security is proved by applying the Leftover Hash Lemma on
+the subset sum modulo $q_0$, and using the random $2r$ in
+\eqref{eq:c2} to further 
+randomize the ciphertext modulo $p$.
+
+However in the batch scheme it would not be sufficient to add such
+random term $2r$; namely the \emph{same} random
+ $2r=2r \bmod p_i$ would be added 
 modulo each of the $p_i$, whereas for the security proof to go through
 these random terms should be independently distributed modulo each of the
 $p_i$'s. Therefore a new technique is required to extend DGHV to
-a semantically secure batch encryption scheme, whose security is based on the Error-Free Approximate-GCD problem.
+a semantically secure batch encryption scheme, whose security is based
+on the Error-Free Approximate-GCD problem. 
 
-\paragraph{Variant of the DGHV Scheme.} In the following, we start by describing a variant of DGHV still for a
+%\paragraph{Variant of the DGHV Scheme.} 
+In the following, we start by describing a variant of DGHV still for a
 single bit message $m$ only, but which \emph{does} extend naturally to the
 batch setting. We first consider the DGHV scheme without the additional
 random $2r$, since this term is of no use in the batch setting. A single
@@ -632,7 +662,7 @@ The randomness of $q=2\sum_{i \in S} q_i \bmod q_0$ follows from the
 Leftover Hash Lemma (LHL) modulo $q_0$. However we cannot apply the LHL
 to $r'=\sum_{i \in S} r_i$ because it is distributed over ${\mathbb Z}$
 instead of modulo an integer. Note that in the original scheme the
-randomness of $r'$ followed from adding a random $2r$ in \eqref{eq:c},
+randomness of $r'$ followed from adding a random $2r$ in \eqref{eq:c2},
 much larger than the $r_i$'s.
 
 Let us assume that we could somehow reduce the integer variable
@@ -659,12 +689,13 @@ $r'$ was actually reduced modulo $\varpi$. Namely, if we generate the
 $r_i$'s such that the sum $r'=\sum_{i \in S} r_i$ is not much larger than
 $\varpi$, then reducing $r'$ modulo $\varpi$ would just subtract a
 small multiple of $\varpi$, which is negligible compared to the large
-random multiple $b \cdot \varpi$. Formally  the distribution of $r' + b
+random multiple $b \cdot \varpi$ obtained through
+(\ref{eq:DGHVmod}). Formally  the distribution of $r' + b 
 \cdot \varpi$ is statistically close to $(r' \bmod \varpi) + b \cdot
 \varpi$, which enables us to apply the LHL to $r' \bmod \varpi$ and
 eventually obtain a security proof.
 
-\paragraph{Extension to the Batch Scheme.} Now the advantage of \eqref{eq:DGHVmod} is that it can be easily extended
+Now the advantage of \eqref{eq:DGHVmod} is that it can be easily extended
 to the batch setting. Instead of using a single random multiple of
 $\varPi$, we use a subset sum of $\ell$ such multiples $\varPi_i$, where
 $\varPi_i \bmod p_j=\varpi_{i,j}$. The Leftover Hash Lemma is then
@@ -704,7 +735,7 @@ $$\pk = \left\{ x_0, \left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\l
 and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
 
 \item[$\BDGHV.\Encrypt(\pk, \vec{m} \in \{0,1\}^\ell)$.] Choose 
-  random integer vectors $\vec b=(b_i)_{1\leq i\leq \tau}
+  random integer vectors $\vec b=(b_i)%_{1\leq i\leq \tau}
   \in(-2^\alpha,2^{\alpha})^\tau$ and $\vec b'=(b'_i)_{0\leq i\leq
       \ell-1} \in(-2^{\alpha'},2^{\alpha'})^{\ell}$ 
 and output the ciphertext:
@@ -737,7 +768,7 @@ b_i\cdot x_i\right]_{x_0}.
   homomorphically evaluating the ``squashed decryption'' circuit
 
 \item $\gamma = \omega(\eta^2\cdot \log\lambda)$ in order to thwart
-  lattice-based attacks (see~\cite{vDGHV2010,CMNT2011});
+  lattice-based attacks~\cite{vDGHV2010,CMNT2011};
 
 \item $\rho' \geq \rho + \lambda$ and  $\alpha' \geq \alpha+\lambda$  for
   the proof of semantic security,
@@ -758,30 +789,17 @@ the compressed public key technique from~\cite{CNT2012}) becomes
 $\Ot{\lambda^7}$ instead of $\Ot{\lambda^5}$.}
 We refer to Section 
 \ref{subsec:practical-implementation} for concrete parameters and
-timings.
+timings. We show in~\cite[Appendix~A]{CLT2013a} that  the above scheme
+is correct for a set of permitted circuits. 
 
-Finally, notice that the above scheme is correct for a set of permitted circuits as proved in~\cite[Appendix~A]{CLT2013a}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Semantic Security}\label{sec:semantic-security}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Ideally we would like to base the security of the new batch DGHV scheme on
-the same assumption as the original scheme, \ie the
-Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
-However we can only show its security under the
-(stronger) Error-Free Approximate-GCD assumption already considered in~\cite{CMNT2011,CNT2012}.
-\begin{definition}[Error-free approximate GCD] 
-The $(\rho, \eta,{\gamma})$-error-free Appro\-xi\-ma\-te-GCD pro\-blem
-is: For a random $\eta$-bit prime $p$, given $y_0=q_0\cdot p$
-where $q_0$ is a random integer in $[0,
-  2^{\gamma}/p)$, and polynomially many samples from $\mathcal
-  D_\rho(p,q_0)$, output $p$. 
-\end{definition} 
-
-Yet, to prove the semantic security of our scheme, 
-we introduce temporary a new decisional assumption that is implied by the 
-Error-Free Approximate-GCD assumption.
+To prove the semantic security of our scheme, 
+we first introduce a temporary decisional assumption that is implied by the 
+Error-Free Approximate-GCD assumption. 
 
 Given integers $q_0$ and $p_0,\ldots,p_{\ell-1}$, we define the oracle
 ${\cal O}_{q_0,(p_i)}(\vec{v})$ which, given as input a vector $\vec{v} \in {\mathbb
@@ -805,18 +823,20 @@ and $\vec{v}_1\leftarrow
 \end{definition}
  
 This decisional
-problem is therefore to distinguish between an encryption of $0$ and
-an encryption of a random message. To prove semantic security 
-we must show that this  still holds when using the public-key
+problem is somehow to distinguish between an encryption of $0$ and
+an encryption of a random message. To prove the semantic security 
+of our scheme we must show that this  still holds when using the public-key
 encryption procedure instead of the oracle ${\cal 
     O}_{q_0,(p_i)}$; this essentially amounts to applying a variant
-                    of the Leftover Hash Lemma.
+                    of the Leftover Hash Lemma. We refer to the full
+                    version~\cite{CLT2013a} for the proof.
 
 \begin{theorem}\label{thm:l-dAGC}
 The batch DGHV scheme is semantically secure under the
 oracle $\ell$-decisional-approximate-GCD assumption.
 \end{theorem}
 
+\ignore{
 We provide a sketch of the proof; see the complete proof in the full version~\cite{CLT2013a}.
 \begin{proof}[Sketch]
 Under the attack scenario the attacker first receives the public key, and outputs two $\ell$-bit messages $\vec m_0$ and $\vec m_1$. The challenger returns an encryption of $\vec m_b$ for a random bit $b$. The attacker finally outputs a guess $b'$ and succeeds if $b' = b$.
@@ -841,9 +861,9 @@ on the $\sum_{i=1}^\tau b_i\cdot \vec x_i$ in the ciphertext $\vec c$. Notice th
 
 Finally $c'$ has no information on $\vec m_b$, and therefore her guess $b'$ 
 is such that $\Pr[b'=b]=1/2$. Therefore, when the oracle-$\ell$-decisional-Approximate-GCD 
-problem is hard, she cannot have a non-negligible advantage against the scheme.\qed\end{proof}
+problem is hard, she cannot have a non-negligible advantage against the scheme.\qed\end{proof}}
 
-Finally, we prove the following Lemma in~\cite[Appendix~C]{CLT2013a}.
+%Finally, we prove the following Lemma in~\cite[Appendix~C]{CLT2013a}.
 
 \begin{lemma}
 \label{l:redsec}
