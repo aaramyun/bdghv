@@ -914,7 +914,7 @@ $S_j$. Formally the scheme is modified as follows:
   $\sk^*=(p_0,\ldots,p_{\ell-1})$ and $\pk^*$ as before. Set $x_{p_j}
   \leftarrow \lfloor 2^\kappa/p_j\rceil$ for
   $j=0,\ldots,{\ell-1}$. Choose at random 
-  $\Theta$-bit vectors $\vec s_j=(s_{j,0},\ldots,s_{j,\Theta-1})$,
+  $\Theta$-bit vectors $\vec s_j=(s_{j,0},\ldots,$ $s_{j,\Theta-1})$,
   each of Hamming weight $\theta$, for $0 \leq j < \ell$.
 Choose at random $\Theta$ integers $u_i\in[0, 2^{\kappa+1})$ for $0
   \leq i <\Theta$, fulfilling the condition that
@@ -966,9 +966,11 @@ all $0 \leq j < \ell$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 As in~\cite{vDGHV2010}, we get that the BDGHV scheme is
-bootstrappable. Moreover, the $\Recrypt$ procedures works naturally in \emph{parallel} over the plaintext bits; other FHE schemes~\cite{SV2011,GHS2012a} when using
-a parallel $\Recrypt$ procedure have much greater complications than for this
-scheme.
+bootstrappable. Moreover, the $\Recrypt$ procedures works naturally in
+\emph{parallel} over the plaintext bits. 
+% other FHE schemes~\cite{SV2011,GHS2012a} when
+% using a parallel $\Recrypt$ procedure have much greater
+% complications than for this scheme.
 
 \ignore{
 In the original DGHV scheme, the decryption equation
@@ -985,7 +987,7 @@ ciphertext which would encrypt the same plaintext bit $m$ but with a
 possibly reduced noise.
 
 Similarly, t}
-The decryption equation~\eqref{eq:decrypt} for the batch
+Namely the decryption equation~\eqref{eq:decrypt} for the batch
 scheme can be evaluated homomorphically by providing   for
 all $0 \leq i < \Theta$ an encryption $\sigma_i$ of the $\ell$
 secret-key bits $s_{j,i}$, with:
@@ -998,7 +1000,7 @@ equation~\eqref{eq:msz}, we have} Notice that the $\ell$ equations
 in~\eqref{eq:decrypt} are homomorphically evaluated in parallel, one in
 each of the $\ell$ 
  plaintext slots of the ciphertext. Therefore, with the same complexity as a single $\Recrypt$
-operation in the original scheme, this batch $\Recrypt$
+operation in the original scheme, the batch $\Recrypt$
 operation is performed in parallel over the 
 $\ell$ slots.
 
@@ -1020,14 +1022,16 @@ our packed ciphertexts, where the $\Add$ and $\Mult$ operations are
 applied to $\ell$ different input bits at once. However, a desired
 feature when dealing with packed ciphertexts is the ability to move
 values between plaintext slots with a public $\Permute$ operation. As opposed to~\cite{GHS2012a} we cannot rely on an underlying algebraic structure.
-Instead we show how to perform  such $\Permute$ at ciphertext refresh time.
+Instead we show how to perform  such $\Permute$ at ciphertext refresh
+time, \ie when performing a  $\Recrypt$.
 This feature is therefore supported at no extra cost assuming a
 ciphertext refresh operation has to be carried out anyway (\ie after each
-$\Mult$ gate). Notice that independently, a similar technique was described 
-for the RLWE-based fully homomorphic schemes~\cite{BV2011a,BV2011b,GHS2012a}
-by Brakerski, Gentry and Halevi~\cite{BGH2013}.
+$\Mult$ gate). Notice that independently, a similar technique was
+described
+in~\cite{BGH2013}.
+for the RLWE-based fully homomorphic schemes~\cite{BV2011a,BV2011b,GHS2012a}.
 
-\smallskip
+
 For any permutation $\zeta$ over $\{0,\ldots,{\ell-1}\}$, we want to homomorphically evaluate the function
 \[ \text{$\ell$-$\Permute$}\left(\zeta,\left(u_0,\ldots,u_{\ell-1}\right)\right) = \left(u_{\zeta(0)},\ldots,u_{\zeta({\ell-1})}\right). \]
 Let $\zeta$ be a permutation to be applied  homomorphically on the plaintext bits. During the $\KeyGen$ operation, the authority can define for each $i\in[0,\Theta-1]$
@@ -1088,11 +1092,7 @@ main difference is that the $\Recrypt$ operation is now performed in
 parallel over $\ell=531$ bits (for the ``Large'' setting) instead of a
 single bit. 
 
-\begin{table}[tb]\scriptsize\centering
-
-\caption{Benchmarking for our Batch DGHV with a compressed public key
-  on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
-\label{t:concparams}
+\begin{table}[h]\scriptsize\centering
 \begin{tabular}{|l|c|c||c|c|c|c|c|c|c|c|c||r|}
 \hline 
 \textbf{Instance}&$\lambda$&$\ell$&$\rho$&$\eta$&$\gamma/ 10^{6}$&$\tau$&$\Theta$&$\pk$ size\\
@@ -1124,6 +1124,10 @@ $3493$s&$61$s&$9.8$s&
 %$0.72$s&
 $28$s&$172$s\\\hline
 \end{tabular}
+\smallskip
+\label{t:concparams}
+\caption{Benchmarking for our Batch DGHV with a compressed public key
+  on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
 \end{table}
 
 
@@ -1137,8 +1141,8 @@ encryption circuit using the batch encryption scheme of Section~\ref{sec:batch-e
 concrete timings. A similar
 implementation with
  the RLWE-based 
-fully-homomorphic encryption scheme~\cite{BV2011a,BV2011b,GHS2012a} is
-discussed in~\cite{GHS2012c}. 
+fully-homomorphic encryption scheme~\cite{BV2011a,BV2011b,GHS2012a}
+was already described in~\cite{GHS2012c}. 
 As mentioned 
 in~\cite{SV2011,NLV2011,GHS2012c}, such an implementation can be used to
 optimize the communication cost in cloud-based
@@ -1316,10 +1320,6 @@ $\Add$,  $5120$
 $\Mult$ and $2448$ $\Recrypt$. 
 
 \begin{table}[tb]\centering
-\caption{Timings of byte-wise and state-wise homomorphic AES developed in
-  C++ with GMP,
-  running on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
-\label{table:aes-results}
 \subtable[Timings for byte-wise representation]{
 \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
 \hline \textbf{Instance}&$\lambda$&$\ell$&$\#$ of enc.&
@@ -1346,6 +1346,10 @@ $\Mult$ and $2448$ $\Recrypt$.
 
 \end{tabular}
 }
+\caption{Timings of byte-wise and state-wise homomorphic AES developed in
+  C++ with GMP,
+  running on a desktop computer (Intel Core i7 at 3.4Ghz, 32GB RAM).}
+\label{table:aes-results}
 \end{table}
 
 \paragraph{Implementation Results.} We implemented both variants
