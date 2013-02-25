@@ -121,7 +121,8 @@ ciphertext on a standard desktop computer; this is comparable to the timings
 presented by Gentry~\etal at Crypto 2012 for their implementation of a 
 Ring-LWE based fully homomorphic encryption scheme.
 
-\keywords{Fully Homomorphic Encryption, Batch Encryption, Homomorphic AES}
+\keywords{Fully Homomorphic Encryption, Batch Encryption, Chinese Remainder Theorem, 
+Approximate GCD, Homomorphic AES}
 \end{abstract}
 
 
@@ -239,7 +240,7 @@ randomize the ciphertext modulo $p$.
 To prove semantic security for the batch scheme our first technique in
 Section~\ref{sec:batch-decisional} is
 to rely on a new assumption, namely the Decisional Approximate-GCD 
-assumption. Under this assumption the integers $x_j$ is the subset-sum
+assumption. Under this assumption the integers $x_j$ in the subset-sum
 from (\ref{eq:c}) are assumed to be indistinguishable from random
 modulo $x_0$; semantic security is then proved by applying the Leftover
 Hash Lemma modulo $x_0$; the additional random $2r$ in \eqref{eq:c} becomes
@@ -248,8 +249,8 @@ encryption to the batch setting is then straightforward; namely one can use
 the same random subset sum technique with
 public key elements $x_j$ having a small residue modulo each of the $p_i$'s
 instead of only modulo $p$. We show that our batch DGHV scheme
-can encrypt $\ell=\Ot{\lambda^2}$ bits in a single ciphertext; therefore
-the ciphertext expansion ratio becomes $\Ot{\lambda^3}$ instead of
+can encrypt $\ell=\Ot{\lambda^3}$ bits in a single ciphertext; therefore
+the ciphertext expansion ratio becomes $\Ot{\lambda^2}$ instead of
 $\Ot{\lambda^5}$ in the original scheme.
 
 In Section~\ref{sec:batch-error-free} we describe a different
@@ -405,7 +406,7 @@ c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 As explained in the introduction, the additional, larger noise $2r$ from the DGHV scheme is not used in this version.
 This simplifies the construction, with the tradeoff of a new decisional assumption and larger security loss.  
 In Section~\ref{sec:batch-error-free}, we present another version which handles this issue differently.
-
+In Section~\ref{sec:fhe}, we describe a transformation to fully homomorphic encryption schemes where $Q_0=\cdots=Q_{\ell-1}=2$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,14 +465,13 @@ b_i\cdot x_i\right]_{x_0}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The size of the message space is determined by $\ell$ and the binary
 length of the $Q_j$'s, which can be an integer from $2$ to $\eta/8$
-depending on the multiplicative depth of the scheme. The details of
-analysis are given in Appendix~\ref{app:correctness}. 
+depending on the multiplicative depth of the scheme.  
 The parameters should satisfy the following constraints:  
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny $\bullet$}
 \itemsep.4em
 \item $\rho=\tilde{\mathcal{O}}(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
-\item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987} and to permit enough multiplicative depth (in Appendix~\ref{app:correctness}),
+\item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987} and to permit enough multiplicative depth,
 \item $\gamma=\eta^2\omega(\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
 \item $\tau=\gamma+\omega(\log\lambda)$, in order to use left-over
   hash lemma (see Section~\ref{reduce_acd}).
@@ -479,13 +479,8 @@ The parameters should satisfy the following constraints:
 We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5), \eta=\tilde{\mathcal{O}}(\lambda^2),
 \rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. We remark that $b_i$ can be chosen in the much larger interval so as to reduce the public key size as in Section~\ref{sec:batch-error-free}. 
 
-The following lemma is proven in Appendix~\ref{app:correctness} with the definition of correctness for
-homomorphic encryption schemes, with respect to a set
-$\mathcal{C_E}$ of permitted circuits.
-
-\begin{lemma}\label{lem:correctness}
-The above scheme is correct for $\mathcal{C_E}$.
-\end{lemma}
+Notice that the above scheme is correct as is proved in \cite{KLYC2013} with the definition of correctness for
+homomorphic encryption schemes, with respect to a set of permitted circuits.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Semantic Security}\label{reduce_acd}
@@ -859,7 +854,7 @@ error-free-approximate-GCD assumption.
 %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Making the Scheme Fully Homomorphic}
+\section{Making the Scheme Fully Homomorphic}\label{sec:fhe}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In this section, we follow Gentry's blueprint~\cite{GenPhD} to
@@ -1343,6 +1338,10 @@ our program runs on a more modest desktop computer with 4 hyperthreaded cores an
 We claim a slightly lower security level, however: $72$ bits versus $80$
 bits for the implementation from~\cite{GHS2012c}.
 
+\subsubsection*{Acknowledgments.} We would like to thank Taekyoung Kwon and Hyung Tae Lee for valuable comments. 
+The first, third, and fourth authors were supported by the National Research Foundation of Korea(NRF) grant funded by the Korea government(MEST) (No. 2012-0001243). 
+The fourth author was also supported by 
+Basic Science Research Program through the National Research Foundation of Korea (NRF) funded by the Ministry of Education, Science and Technology (No. 2012R1A1A2039129).
 %
 \bibliographystyle{alpha}
 \bibliography{batchdghv}
