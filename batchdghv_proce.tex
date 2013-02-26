@@ -473,7 +473,7 @@ The parameters should satisfy the following constraints:
 \item $\rho=\tilde{\mathcal{O}}(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
 \item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987} and to permit enough multiplicative depth,
 \item $\gamma=\eta^2\omega(\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
-\item $\tau=\gamma+\omega(\log\lambda)$, in order to use left-over
+\item $\tau=\gamma+\omega(\log\lambda)$, in order to use leftover
   hash lemma (see Section~\ref{reduce_acd}).
 \end{itemize}
 We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5), \eta=\tilde{\mathcal{O}}(\lambda^2),
@@ -540,7 +540,7 @@ c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i +
 b_i\cdot x_i\right]_{x_0}.
 \end{equation*}
 
-Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are uniform on $\Z\cap[0,x_0)$, and we may use the leftover hash lemma.  In fact we may use the simplified version shown in Lemma~1 of~\cite{vDGHV2010} to conclude that the distribution of $[\sum_{i=1}^\tau b_i\cdot x_i]_{x_0}$ is statistically close to the uniform distribution on $\Z\cap[0,x_0)$, when the parameters are chosen according to Section~\ref{parameter}.  Therefore, the distribution of $c$ is uniform random, regardless of the plaintext vector $\vec{m}$.  This shows that \CDGHV\ is a lossy encryption scheme, and the semantic security directly follows from that.\qed
+Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are uniform on $\Z\cap[0,x_0)$, and we may use the Leftover Hash Lemma.  In fact we may use the simplified version shown in Lemma~1 of~\cite{vDGHV2010} to conclude that the distribution of $[\sum_{i=1}^\tau b_i\cdot x_i]_{x_0}$ is statistically close to the uniform distribution on $\Z\cap[0,x_0)$, when the parameters are chosen according to Section~\ref{parameter}.  Therefore, the distribution of $c$ is uniform random, regardless of the plaintext vector $\vec{m}$.  This shows that \CDGHV\ is a lossy encryption scheme, and the semantic security directly follows from that.\qed
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -591,6 +591,33 @@ where $r_i'\gets\Z\cap (-2^\rho,2^\rho)$ and $e_i'\gets\Z\cap[0,p_i)$. By the hy
 The \CDGHV \ scheme is semantically secure under the
 decisional-approximate-GCD assumption.
 \end{corollary}
+
+\subsection{Applications to Secure Large Integer Arithmetic}
+Secure integer arithmetic is one of the most important applications of homomorphic encryption schemes. 
+It includes frequently used statistical functions such as mean, standard deviation, logistical regression, and secure evaluation of a multivariate function over the integers.
+Some applications may require very large integer inputs in the computation of these functions. 
+For the homomorphic computation of these functions, one may use FHEs. 
+However, the large ciphertext expansion and rather high cost of bootstrapping make this cumbersome and inefficient. 
+%Also SWHE on small message space can not be efficient since it requires a large depth for integer operations. 
+In fact, even an addition of two $\lambda$-bit integers using bit operations needs computing degree-$O(\lambda)$ polynomial over $\Z_2$ due to the carry computation. 
+For this reason, it is very important to construct an efficient somewhat homomorphic scheme supporting large integer arithmetic on encrypted data. 
+
+As is mentioned earlier, $\CDGHV$ scheme supports arithmetic operations
+on $\Z_Q$, $Q=Q_0\cdots Q_{\ell-1}$ when all $Q_i$'s are pairwise coprime.
+We can freely choose $\ell$ up to $\Ot{\lambda^3}$ depending on the applications.
+And the advantage of our scheme in the overhead stands out, as the plaintext space gets larger. 
+
+%In the following, we compare our scheme with other homomorphic schemes
+%when dealing with integer arithmetic operations.  
+%There are several homomorphic encryptions based on various hard problems.  
+%Gentry's scheme and its optimized variants are still less efficient. 
+%FHEs based on the ACD are conceptually simpler, but support only bit operations. 
+%More recent schemes based on (R)LWE appear to be most efficient in various parameters.
+%We compare our scheme with the BV scheme in this category~\cite{BV2011b}. Large integer arithmetic with this scheme can be found in \cite{NLV2011}.
+%In the BV scheme~\cite{BV2011b}, $q>t>(\ell+1)^\lambda (2^{2\lambda})^{\lambda}$
+%and $n$ must be larger than $\lambda \l$ to permit depth-$\lambda$ on $\ell$-bit integers where the ciphertext space is $\Z_q[x]/(x^n+1)$ and the message space is $\Z_t[x]/(x^n+1)$.
+%These constraints can be a disadvantage to encrypt large integers, since the overhead is about $\tilde{O}(n\log q/\l)\approx\tilde{O}(\lambda^3)$.  
+%To make encryption scheme supporting degree $\lambda$ on polynomial on large integers in our scheme, it is sufficient to choose $O(\lambda)$-bit pairwise coprime integers $Q_1,\dots,Q_k$. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Batch DGHV Scheme Based on the Error-Free Approximate-GCD}\label{sec:batch-error-free}
