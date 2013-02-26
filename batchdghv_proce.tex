@@ -131,7 +131,7 @@ Approximate GCD, Homomorphic AES}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Fully Homomorphic Encryption (FHE).}
+\subsubsection{Fully Homomorphic Encryption (FHE).}  
 
 Fully homomorphic encryption allows a worker to perform implicit
 additions and multiplications on plaintext values while exclusively
@@ -197,7 +197,7 @@ three main families of fully homomorphic encryption schemes are known:
 In this paper we focus on the DGHV scheme. Our goal is to extend DGHV to
 support the same batching capability %~\cite{SV2011} 
 as in RLWE-based
-schemes~\cite{BV2011a,BV2011b}, and to homomorphically evaluate a full AES
+schemes~\cite{BGV2012,GHS2012a}, and to homomorphically evaluate a full AES
 circuit with roughly the same level of efficiency as~\cite{GHS2012c}, in
 order to obtain an implementation of a FHE scheme with similar features
 but based on different techniques and assumptions. 
@@ -255,7 +255,7 @@ $\Ot{\lambda^5}$ in the original scheme.
 
 In Section~\ref{sec:batch-error-free} we describe a different
 technique that does not rely on a new decisional assumption but on the known  (computational)
-Error-Free Approximate-GCD asssumption used in previous
+Error-Free Approximate-GCD assumption used in previous
 work~\cite{vDGHV2010,CMNT2011,CNT2012}. For the proof of semantic 
 security to go through in the batch setting, the ciphertext $c$
 should be independently randomized modulo each of the $p_i$'s, which is not 
@@ -312,8 +312,8 @@ bit-length of the noise in the public key (resp.\ in a fresh
 ciphertext). 
 
 For a real number
-$x$, we denote by $\lceil x \rceil$, $\lfloor x \rfloor$ and $\lceil x
-\rfloor$ the upper, lower or nearest integer part of $x$. For
+$x$, we denote by $\lceil x \rceil$, $\lfloor x \rfloor$, and $\lceil x
+\rfloor$ the upper, lower, and nearest integer part of $x$. For
 integers $z$, $p$ we denote the reduction of $z$ modulo $p$ by
 $(z\bmod p)$ or $[z]_p$ with $-p/2 < [z]_p \leq p/2$. 
 
@@ -387,18 +387,18 @@ of the following form:
 \[
 c=\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, Q_0 r_0+m_0,\ldots,Q_{\ell-1}r_{\ell-1}+m_{\ell-1}),
 \]
-where $q$ is uniform random in modulo $q_0$ and $r_i$ are small noises.  Decryption can be done by
+where $q$ is uniform random in modulo $q_0$ and $r_i$'s are small noises.  Decryption can be done by
 \[
 m_i=[c\bmod{p_i}]_{Q_i}.
 \]
 Homomorphic addition and multiplication can be done by corresponding arithmetic operations on ciphertexts.
 
-This scheme can be considered as encryption of vectors $(m_0, \dots, m_{\ell-1})$, supporting parallel, componentwise
-addition and multiplications.  Or, if we choose $Q_i$ to be mutually prime, then using the isomorphism 
-$\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as somewhat homomorphic encryption supporting arithmetic operations
+This scheme can be considered as an encryption of vectors $(m_0, \dots, m_{\ell-1})$, supporting parallel, componentwise
+additions and multiplications.  Or, if we choose $Q_i$'s to be pairwise coprime, then using the isomorphism 
+$\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as a somewhat homomorphic encryption supporting arithmetic operations
 on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
 
-In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$.  Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
+In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$ where $\delta_{i,j}$ is the Kronecker delta. Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
 \[
 c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 \]
@@ -410,12 +410,6 @@ In Section~\ref{sec:fhe}, we describe a transformation to fully homomorphic encr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-For a real number
-$x$, we denote by $\lceil x \rceil$, $\lfloor x \rfloor$ and $\lceil x
-\rfloor$ the upper, lower or nearest integer part of $x$. For
-integers $z$, $p$ we denote the reduction of $z$ modulo $p$ by
-$(z\bmod p)$ or $[z]_p$ with $-p/2 < [z]_p \leq p/2$.
 
 \begin{description}\label{CDGHV}
 \item[$\CDGHV.\KeyGen(1^\lambda,(Q_j)_{0\leq j <\ell})$.] Choose $\eta$-bit distinct primes $p_j$, $0\leq j<\ell$, and denote $\pi$
@@ -432,10 +426,10 @@ $x_0=q_0\cdot\pi$, where $q_0 \gets \Z \cap [0,2^{\gamma}/\pi)$
 $$
 \begin{array}{lll}
 1 \leq i \leq \tau, & \qquad x_i\bmod p_j = Q_j r_{i,j},& \qquad r_{i,j}
-\gets\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+\gets\Z\cap(-2^{\rho}, 2^{\rho}), \\[.2cm]
 
 0\leq i\leq \ell-1, & \qquad x'_i\bmod p_j = Q_jr'_{i,j}+\delta_{i,j}, &
-\qquad r'_{i,j}\gets\Z\cap(-2^{\rho}, 2^{\rho}) \\[.2cm]
+\qquad r'_{i,j}\gets\Z\cap(-2^{\rho}, 2^{\rho}). \\[.2cm]
 
 \end{array}
 $$
@@ -445,7 +439,7 @@ Finally, let $\pk = \left\{ x_0, \left(Q_i\right)_{0\leq i \leq
 and let $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
 \\\vspace{-0.25cm}
 \item[$\CDGHV.\Encrypt(\pk, {\vec{m}})$.] For any
-  $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose
+  $\vec{m}=(m_0,\dots,m_{\ell-1})$ with $m_i\in\Z_{Q_i}$, choose a
   random binary vector $\vec{b}=(b_i)_{1\leq i \leq \tau}\in
   \{0,1\}^\tau$ and output the ciphertext:
 \begin{equation}
@@ -454,9 +448,9 @@ c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i +
 	\sum_{i=1}^\tau 
 b_i\cdot x_i\right]_{x_0}.
 \end{equation}
-\item[$\CDGHV.\Decrypt(\sk, c)$.] Output $\vec{m}=(m_0,\ldots,m_{\ell-1})$ where $m_j \gets [c]_{p_j} \bmod Q_j$.
+\item[$\CDGHV.\Decrypt(\sk, c)$.] Output $\vec{m}=(m_0,\ldots,m_{\ell-1})$ where $m_j \gets [c\bmod{p_j}]_{Q_j}$.
 \\\vspace{-0.25cm}
-\item[$\CDGHV.\Add(\pk, c_1, c_2)$.] Output $c_1+c_2 \bmod x_0$
+\item[$\CDGHV.\Add(\pk, c_1, c_2)$.] Output $c_1+c_2 \bmod x_0$.
 \\\vspace{-0.25cm}
 \item[$\CDGHV.\Mult(\pk, c_1, c_2)$.] Output $c_1 \cdot c_2 \bmod x_0$.
 \end{description}
@@ -471,15 +465,15 @@ The parameters should satisfy the following constraints:
 \renewcommand{\labelitemi}{\tiny $\bullet$}
 \itemsep.4em
 \item $\rho=\tilde{\mathcal{O}}(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
-\item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987} and to permit enough multiplicative depth,
+\item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987}, and to permit enough multiplicative depth,
 \item $\gamma=\eta^2\omega(\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
 \item $\tau=\gamma+\omega(\log\lambda)$, in order to use leftover
   hash lemma (see Section~\ref{reduce_acd}).
 \end{itemize}
-We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5), \eta=\tilde{\mathcal{O}}(\lambda^2),
-\rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. We remark that $b_i$ can be chosen in the much larger interval so as to reduce the public key size as in Section~\ref{sec:batch-error-free}. 
+We choose $\gamma=\tilde{\mathcal{O}}(\lambda^5)$, $\eta=\tilde{\mathcal{O}}(\lambda^2)$,
+$\rho=2\lambda$, $\tau=\gamma+\lambda$ which is similar to the DGHV's convenient parameter setting \cite{vDGHV2010}. We remark that $b_i$ can be chosen in a much larger interval so as to reduce the public key size as in Section~\ref{sec:batch-error-free}. 
 
-Notice that the above scheme is correct as is proved in \cite{KLYC2013} with the definition of correctness for
+Notice that the above scheme is correct as is proved in the full version \cite{KLYC2013} with the definition of correctness for
 homomorphic encryption schemes, with respect to a set of permitted circuits.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -496,12 +490,12 @@ Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \do
 \[
 x=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q,Q_0r_0,\dots,Q_{\ell-1}r_{\ell-1}),
 \]
-where $q\gets\Z\cap[0,q_0)$ and $r_i\gets\Z\cap(-2^\rho,2^\rho)$ for $i=0,\dots,\ell-1$
+where $q\gets\Z\cap[0,q_0)$ and $r_i\gets\Z\cap(-2^\rho,2^\rho)$ for $i=0,\dots,\ell-1$.
 
 \begin{definition}[$\ell$-Decisional Approximate $\mathbf{GCD}_Q$ Problem: $\ell$-$\mathbf{DACD}_Q$] \\
 The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ problem is: for $\eta$-bit distinct primes $p_0,\dots,p_{\ell-1}$ and $\mu$-bit integers $Q_0,\dots,Q_{\ell-1}$, given a $\gamma$-bit integer  $x_0:=q_0p_0\cdots p_{\ell-1}$, with $\gcd(x_0,Q_i)=1$ for $i=0,\dots,\ell-1$, and  %$q_0=\Big\lfloor{2^\gamma\over\prod_{i=1}^kp_i}\Big\rfloor$ , 
-polynomially many samples from $\D:=\D_{\rho}(\vec{p};\vec{Q};q_0)$ and a set $X$ consisting of $\ell$ integers $x'_i=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q_i,Q_0r'_{i,0}+\delta_{i,0},\dots,Q_{\ell-1}r'_{i,\ell-1}+\delta_{i,\ell-1})$ where $q_i$, $r'_{i,j}$ are chosen by
-$q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D$ and $r\gets\Z\cap[0,x_0)$.
+polynomially many samples from $\D:=\D_{\rho}(\vec{p};\vec{Q};q_0)$ and a set $X$ consisting of $\ell$ integers $x'_i=\crt_{q_0,p_0,\dots,p_{\ell-1}}(q_i,Q_0r'_{i,0}+\delta_{i,0},\dots,Q_{\ell-1}r'_{i,\ell-1}+\delta_{i,\ell-1})$ where $q_i$, $r'_{i,j}$ are chosen as
+$q_i\gets\Z\cap[0,q_0)$, $r'_{i,j}\gets\Z\cap(-2^\rho,2^\rho)$ for all $i,j\in\{0,\dots,\ell-1\}$, determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D$ and $r\gets\Z\cap[0,x_0)$.
 \end{definition}
 
 The $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption then states that this problem is hard for any polynomial time distinguisher.
@@ -522,18 +516,18 @@ and for the lossy public key $\pk'$, $x_i\gets\Z\cap[0,x_0)$.
 Now we may rely on the standard hybrid argument to show that $\pk$ and $\pk'$ are computationally indistinguishable, under the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption: for each $\hat\imath\in\{1, \dots, \tau\}$, we define $\pk^{(\hat\imath)}$, where
 \[
 x_i \gets \begin{cases}
-\Z\cap[0,x_0)&\text{for $i\leq \hat\imath$},\\
-\D_\rho(\vec{p}; \vec{Q}; q_0)&\text{for $i>\hat\imath$}.
+\Z\cap[0,x_0)&\text{for $1\leq i\leq \hat\imath$},\\
+\D_\rho(\vec{p}; \vec{Q}; q_0)&\text{for $\hat\imath<i\leq\tau$}.
 \end{cases}
 \]
-Then $\pk^{(0)}$ is identical as $\pk$, and $\pk^{(\tau)}$ is identical as $\pk'$, and using the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption, we may show that $\pk^{(\hat\imath)}$ is indistinguishable from $\pk^{(\hat\imath+1)}$ for $\hat\imath=0$, \dots, $\tau-1$,
+Then $\pk^{(0)}$ is identical to $\pk$, and $\pk^{(\tau)}$ is identical to $\pk'$, and using the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption, we may show that $\pk^{(\hat\imath)}$ is indistinguishable from $\pk^{(\hat\imath+1)}$ for $\hat\imath=0$, \dots, $\tau-1$,
 proving that $\pk$ and $\pk'$ are computationally indistinguishable.
 
 Next, we show that under the lossy key $\pk'$, the \CDGHV\ scheme is
-secure statistically: for any two plaintexts $\vec{m}$ and $\vec{m}'$,
+secure: for any two plaintexts $\vec{m}$ and $\vec{m}'$,
 the distributions of their corresponding ciphertexts $c$, $c'$ under
 the lossy key $\pk'$ are statistically close.  Recall that from
-equation (\ref{eq:enccdghv}), we have
+Equation~\eqref{eq:enccdghv}, we have
 \begin{equation*}
 c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i + 
 	\sum_{i=1}^\tau 
@@ -547,7 +541,7 @@ Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are uniform on
 \subsection{Hardness Assumption}\label{decisional_assumption}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We show that the semantic securty of our scheme can be based on a
+We show that the semantic security of our scheme can be based on a
 simpler decisional assumption with a single prime $p$. 
 %In fact, decisional approximate GCD is considered by Coron et al[] for the first time.
  For two specific
@@ -559,26 +553,28 @@ $\gamma$-bit integers:
 
 \begin{definition}[Decisional Approximate GCD Problem: DACD]
 \label{def:dagcd}
-The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: For a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\D_{\rho}(p,q_0)$,
+The $(\rho,\eta,\gamma)$-decisional approximate GCD problem is: for a random $\eta$-bit prime $p$, given a $\gamma$-bit integer  $x_0=q_0\cdot p$ and polynomially many samples from $\D_{\rho}(p,q_0)$,
 %and a set $S:=\{x_i \mod x_0 \big|$ for polynomially many samples $x_i\gets \D_{\gamma,\rho}(p)\}$, 
 determine $b\in\{0,1\}$ from $z=x+r\cdot b\mod x_0$ where $x\gets\D_{\rho}(p,q_0)$ and $r\gets\Z\cap[0,x_0)$.
 \end{definition}
 
-We give a sketch of the proof of the following lemma. For the detailed proof, see the full version \cite{KLYC2013}. 
+The $(\rho,\eta,\gamma)$-decisional approximate GCD assumption then states that this problem is hard for any polynomial time distinguisher.
+
+We now give a sketch of the proof of the following lemma. For the detailed proof, see the full version \cite{KLYC2013}. 
 \begin{lemma}
 \label{le:redsec}
-The $\ell$-decisional-Approximate-GCD$_Q$ problem is hard under the
-decisional-approximate-GCD assumption.
+The $\ell$-decisional approximate GCD$_Q$ problem is hard under the
+decisional approximate GCD assumption.
 \end{lemma}
-\begin{proof}[Sketch] The main difference between $\mathbf{DACD}$ and \DACD\  is the existence of $Q_0$ in the latter problem. When $Q_0$ is coprime to $x_0$, it is easy to see that both problems are equivalent. Namely, multiplying by $Q_0$ modulo $x_0$ efficiently converts samples from $\D_\rho(p,q_0)$ to $\D_\rho(p; Q_0; q_0)$. 
+\begin{proof}[Sketch] The main difference between $\mathbf{DACD}$ and \DACD\  is the existence of $Q_0$ in the latter problem. When $Q_0$ is coprime to $x_0$, it is easy to see that both problems are equivalent. Namely, multiplying by $Q_0$ modulo $x_0$ efficiently converts samples from $\D_\rho(p,q_0)$ to $\D_\rho((p); (Q_0); q_0)$. 
 
 Now, we need to show that the \lDACD\ problem is hard under the
 \DACD\ assumption. We use a hybrid argument. From the
-\DACD\ problem instance $x_0=q_0\cdot p$ and samples from $\D_\rho(p;
-Q_0; q_0)$, we choose $\ell-1$ primes ourselves. Putting a prime $p$
+\DACD\ problem instance $x_0=q_0\cdot p$ and samples from $\D_\rho((p);
+(Q_0); q_0)$, we choose $\ell-1$ primes ourselves. Putting a prime $p$
 from \DACD\ at a random position $i_0$ among the $p_i$'s, we can
 construct samples from $\D_{\rho}(\vec{p};\vec{Q};q_0)$ using the Chinese
-Remainder Theorem with samples from $\D_\rho(p; Q_0; q_0)$. And a set
+Remainder Theorem with samples from $\D_\rho((p); (Q_0); q_0)$. And a set
 $X$ also can be efficiently constructed. For the challenge $z$, we
 construct a \lDACD\  challenge $z'$ such that  
 \begin{equation*}
@@ -589,10 +585,10 @@ where $r_i'\gets\Z\cap (-2^\rho,2^\rho)$ and $e_i'\gets\Z\cap[0,p_i)$. By the hy
 \end{proof}
 \begin{corollary}
 The \CDGHV \ scheme is semantically secure under the
-decisional-approximate-GCD assumption.
+decisional approximate GCD assumption.
 \end{corollary}
 
-\subsection{Applications to Secure Large Integer Arithmetic}
+\subsection{Application to Secure Large Integer Arithmetic}
 Secure integer arithmetic is one of the most important applications of homomorphic encryption schemes. 
 It includes frequently used statistical functions such as mean, standard deviation, logistical regression, and secure evaluation of a multivariate function over the integers.
 Some applications may require very large integer inputs in the computation of these functions. 
@@ -602,8 +598,8 @@ However, the large ciphertext expansion and rather high cost of bootstrapping ma
 In fact, even an addition of two $\lambda$-bit integers using bit operations needs computing degree-$O(\lambda)$ polynomial over $\Z_2$ due to the carry computation. 
 For this reason, it is very important to construct an efficient somewhat homomorphic scheme supporting large integer arithmetic on encrypted data. 
 
-As is mentioned earlier, $\CDGHV$ scheme supports arithmetic operations
-on $\Z_Q$, $Q=Q_0\cdots Q_{\ell-1}$ when all $Q_i$'s are pairwise coprime.
+As is mentioned earlier in this section, $\CDGHV$ scheme supports arithmetic operations
+on $\Z_Q$ with $Q=Q_0\cdots Q_{\ell-1}$ when all $Q_i$'s are pairwise coprime.
 We can freely choose $\ell$ up to $\Ot{\lambda^3}$ depending on the applications.
 And the advantage of our scheme in the overhead stands out, as the plaintext space gets larger. 
 
