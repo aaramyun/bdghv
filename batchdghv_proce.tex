@@ -345,9 +345,9 @@ resulting integer.
 \item[$\DGHV.\Decrypt(\sk, c)$.] Output $m \leftarrow [c \bmod p]_2$.
 \end{description}
 
-As shown in~\cite{vDGHV2010} the scheme is somewhat homomorphic, \ie a
+As shown in~\cite{vDGHV2010} the scheme is somewhat homomorphic, \ie, a
 limited number of homomorphic operations can be performed on
-ciphertexts. More precisely given two ciphertexts $c=q \cdot p+2r+m$
+ciphertexts. More precisely, given two ciphertexts $c=q \cdot p+2r+m$
 and $c'=q' \cdot p+2r'+m'$ where $r$ and $r'$ are $\rho'$-bit
 integers, the ciphertext $c+c'$ is an encryption of
 $m + m' \bmod 2$ under a $(\rho'+1)$-bit noise and the ciphertext $c \cdot
@@ -391,14 +391,15 @@ where $q$ is uniform random in modulo $q_0$ and $r_i$'s are small noises.  Decry
 \[
 m_i=[c\bmod{p_i}]_{Q_i}.
 \]
-Homomorphic addition and multiplication can be done by corresponding arithmetic operations on ciphertexts.
 
-This scheme can be considered as an encryption of vectors $(m_0, \dots, m_{\ell-1})$, supporting parallel, componentwise
+Then, homomorphic addition and multiplication is done by corresponding arithmetic operations on ciphertexts.
+
+This scheme can be considered as encrypting vectors $(m_0, \dots, m_{\ell-1})$, supporting parallel, componentwise
 additions and multiplications.  Or, if we choose $Q_i$'s to be pairwise coprime, then using the isomorphism 
 $\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as a somewhat homomorphic encryption supporting arithmetic operations
 on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
 
-In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$ where $\delta_{i,j}$ is the Kronecker delta. Then a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
+In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$ where $\delta_{i,j}$ is the Kronecker delta. Then, a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
 \[
 c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 \]
@@ -418,7 +419,7 @@ $x_0=q_0\cdot\pi$, where $q_0 \gets \Z \cap [0,2^{\gamma}/\pi)$
   is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
     not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
     generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
-  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$, and abort otherwise.
+  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$, and abort otherwise.\footnote{But note that the probability of this case to happen is negligible.}
   
   Choose the following integers $x_i$ and $x'_i$ with a quotient by $\pi$ uniformly
   and independently distributed in $\Z\cap [0, q_0)$, and with the
@@ -484,7 +485,9 @@ Here we show the semantic security of the \CDGHV\ scheme, based on a
 new assumption called $\ell$-$\mathbf{DACD}_Q$.  In fact, this rather
 complicated assumption is given only as an intermediate step for the
 proof, and in Section~\ref{decisional_assumption}, we prove this
-assumption from a simpler decisional assumption. 
+assumption from a simpler decisional assumption, called Decisional 
+Approximate GCD Assumption ($\mathbf{DACD}$).  So the security of our scheme
+is eventually based on this assumption.
 
 Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \dots, Q_{\ell-1})$ of length $\ell$ and an integer $q_0$, let us define the distribution $\D_\rho(\vec{p}; \vec{Q}; q_0)$ as follows.  The output of the distribution is
 \[
@@ -1386,9 +1389,9 @@ We claim a slightly lower security level, however: $72$ bits versus $80$
 bits for the implementation from~\cite{GHS2012c}.
 
 \subsubsection*{Acknowledgments.} We would like to thank Taekyoung Kwon and Hyung Tae Lee for valuable comments. 
-The first, third, and fourth authors were supported by the National Research Foundation of Korea(NRF) grant funded by the Korea government(MEST) (No. 2012-0001243). 
+The first, third, and fourth authors were supported by the National Research Foundation of Korea (NRF) grant funded by the Korea government (MEST) (No.~2012-0001243).
 The fourth author was also supported by 
-Basic Science Research Program through the National Research Foundation of Korea (NRF) funded by the Ministry of Education, Science and Technology (No. 2012R1A1A2039129).
+Basic Science Research Program through the National Research Foundation of Korea (NRF) funded by the Ministry of Education, Science and Technology (No.~2012R1A1A2039129).  The seventh author was supported by the National Research Foundation of Korea (NRF) grant funded by the Korean government (MEST) (No.~2011--0025127) and also by 2010 Research Fund of the UNIST (Ulsan National Institute of Science and Technology).
 %
 \bibliographystyle{alpha}
 \bibliography{batchdghv}
