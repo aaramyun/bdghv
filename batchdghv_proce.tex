@@ -111,12 +111,12 @@ We present two variants in which the semantic security is based on different
 assumptions. The first variant is based on a new decisional problem,
 the Decisional Ap\-pro\-xi\-ma\-te-GCD problem,  
 whereas the second variant is based on the more classical computational Error-Free
-Approximate-GCD problem but requires a linear sum with additional public key elements.
+Approximate-GCD problem but requires additional public key elements.
 
 We also show how to perform arbitrary permutations on the underlying plaintext
 vector given the ciphertext and the public key. Our scheme offers competitive
 performance even with the bootstrapping procedure: we describe an implementation of the homomorphic evaluation
-of AES encryption, with an amortized cost of about 12 minutes per AES
+of AES, with an amortized cost of about 12 minutes per AES
 ciphertext on a standard desktop computer; this is comparable to the timings
 presented by Gentry~\etal at Crypto 2012 for their implementation of a 
 Ring-LWE based fully homomorphic encryption scheme.
@@ -217,7 +217,7 @@ Theorem with respect to a tuple of $(\ell+1)$ coprime integers $q_0,p_0,\ldots,p
 \[ c = \crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, 2r_0+m_0,\ldots,2r_{\ell-1}+m_{\ell-1}), \]
 and correctly decrypts to the bit vector $(m_i)$ given by $m_i=[c \bmod p_i]\bmod 2$ for all $0 \leq i < \ell$.\footnote{We denote by 
 $\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q,a_0,\ldots,a_{\ell-1})$ the unique
-  integer $u$ smaller than $q_0\cdot\prod_{i=0}^{\ell-1} p_i$ such
+  integer $u$ with $0 \leq u <q_0\cdot\prod_{i=0}^{\ell-1} p_i$ such
   that $u \equiv q \pmod{q_0}$ and $u \equiv a_i \pmod{p_i}$ for
   all $0 \leq i < \ell$.} Modulo each of the $p_i$'s the
 ciphertext $c$ behaves as in the original DGHV scheme. Accordingly, the
@@ -234,12 +234,12 @@ public key elements $x_j=q_j \cdot p + r_j$ as
 c = \bigg[ m+2r+2 \sum\limits_{j \in S} x_j \bigg]_{x_0}\;.
 \end{equation}
 The semantic security is proved by applying the Leftover Hash Lemma on
-the subset sum, and using the random $2r$ in \eqref{eq:c} to further
+the subset sum modulo $q_0$, and using the random $2r$ in \eqref{eq:c} to further
 randomize the ciphertext modulo $p$.
 
-To prove semantic security for the batch scheme our first technique in
-Section~\ref{sec:batch-decisional} is
-to rely on a new assumption, namely the Decisional Approximate-GCD 
+To prove semantic security for the batch scheme our first technique 
+%in Section~\ref{sec:batch-decisional} 
+is to rely on a new assumption, namely the Decisional Approximate-GCD 
 assumption. Under this assumption the integers $x_j$ in the subset-sum
 from (\ref{eq:c}) are assumed to be indistinguishable from random
 modulo $x_0$; semantic security is then proved by applying the Leftover
@@ -387,16 +387,17 @@ of the following form:
 \[
 c=\crt_{q_0,p_0,\ldots,p_{\ell-1}}(q, Q_0 r_0+m_0,\ldots,Q_{\ell-1}r_{\ell-1}+m_{\ell-1}),
 \]
-where $q$ is uniform random in modulo $q_0$ and $r_i$'s are small noises.  Decryption can be done by
+where $q$ is uniform random modulo $q_0$ and $r_i$'s are small noises.  Decryption can be done by
 \[
 m_i=[c\bmod{p_i}]_{Q_i}.
 \]
+Homomorphic addition and multiplication is done by the
+corresponding arithmetic operations on ciphertexts. 
 
-Then, homomorphic addition and multiplication is done by corresponding arithmetic operations on ciphertexts.
-
-This scheme can be considered as encrypting vectors $(m_0, \dots, m_{\ell-1})$, supporting parallel, componentwise
-additions and multiplications.  Or, if we choose $Q_i$'s to be pairwise coprime, then using the isomorphism 
-$\Z_{\prod Q_i}\cong\prod\Z_{Q_i}$, we may regard this as a somewhat homomorphic encryption supporting arithmetic operations
+This scheme can be considered as encrypting vectors $(m_0, \dots,
+m_{\ell-1})$ and supporting parallel, componentwise
+additions and multiplications.  Or, if we choose the $Q_i$'s to be pairwise coprime, then using the isomorphism 
+$\Z_{\prod\!Q_i}\cong\prod\Z_{Q_i}$, we may regard this as a somewhat homomorphic encryption supporting arithmetic operations
 on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
 
 In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$ where $\delta_{i,j}$ is the Kronecker delta. Then, a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
@@ -405,7 +406,8 @@ c=\left[\sum_{i=0}^{\ell-1}m_i\cdot x_i'+\sum_{i\in S} x_i\right]_{x_0}.
 \]
 
 As explained in the introduction, the additional, larger noise $2r$ from the DGHV scheme is not used in this version.
-This simplifies the construction, with the tradeoff of a new decisional assumption and larger security loss.  
+This simplifies the construction, with the trade-off of a new
+decisional assumption and a larger security loss.  
 In Section~\ref{sec:batch-error-free}, we present another version which handles this issue differently.
 In Section~\ref{sec:fhe}, we describe a transformation to fully homomorphic encryption schemes where $Q_0=\cdots=Q_{\ell-1}=2$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,7 +421,9 @@ $x_0=q_0\cdot\pi$, where $q_0 \gets \Z \cap [0,2^{\gamma}/\pi)$
   is a $2^{\lambda^2}$-rough integer.\footnote{An integer $a$ is $b$-rough when it does
     not contain prime factors smaller than $b$. As in~\cite{CMNT2011} one can
     generate $q_0$ as a product of $2^{\lambda^2}$-bit primes.}  
-  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$, and abort otherwise.\footnote{But note that the probability of this case to happen is negligible.}
+  Make sure that $\gcd(Q_j,x_0)=1$ for $0\leq j<\ell$, and abort
+  otherwise.\footnote{Note that the abort case happens with negligible
+    probability.}
   
   Choose the following integers $x_i$ and $x'_i$ with a quotient by $\pi$ uniformly
   and independently distributed in $\Z\cap [0, q_0)$, and with the
@@ -485,7 +489,7 @@ Here we show the semantic security of the \CDGHV\ scheme, based on a
 new assumption called $\ell$-$\mathbf{DACD}_Q$.  In fact, this rather
 complicated assumption is given only as an intermediate step for the
 proof, and in Section~\ref{decisional_assumption}, we prove this
-assumption from a simpler decisional assumption, called Decisional 
+assumption from a simpler decisional assumption, called the Decisional 
 Approximate GCD Assumption ($\mathbf{DACD}$).  So the security of our scheme
 is eventually based on this assumption.
 
@@ -526,10 +530,10 @@ x_i \gets \begin{cases}
 Then $\pk^{(0)}$ is identical to $\pk$, and $\pk^{(\tau)}$ is identical to $\pk'$, and using the $(\rho,\eta,\gamma,\mu)$-$\ell$-decisional approximate GCD$_Q$ assumption, we may show that $\pk^{(\hat\imath)}$ is indistinguishable from $\pk^{(\hat\imath+1)}$ for $\hat\imath=0$, \dots, $\tau-1$,
 proving that $\pk$ and $\pk'$ are computationally indistinguishable.
 
-Next, we show that under the lossy key $\pk'$, the \CDGHV\ scheme is
+Next, we show that under the lossy key $\pk'$, the \CDGHV\ scheme is semantically
 secure: for any two plaintexts $\vec{m}$ and $\vec{m}'$,
 the distributions of their corresponding ciphertexts $c$, $c'$ under
-the lossy key $\pk'$ are statistically close.  Recall that from
+the lossy key $\pk'$ are statistically close.  Namely, recall that from
 Equation~\eqref{eq:enccdghv}, we have
 \begin{equation*}
 c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i + 
@@ -537,7 +541,16 @@ c = \left[\sum\limits_{i=0}^{\ell-1} m_i \cdot x'_i +
 b_i\cdot x_i\right]_{x_0}.
 \end{equation*}
 
-Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are uniform on $\Z\cap[0,x_0)$, and we may use the Leftover Hash Lemma.  In fact we may use the simplified version shown in Lemma~1 of~\cite{vDGHV2010} to conclude that the distribution of $[\sum_{i=1}^\tau b_i\cdot x_i]_{x_0}$ is statistically close to the uniform distribution on $\Z\cap[0,x_0)$, when the parameters are chosen according to Section~\ref{parameter}.  Therefore, the distribution of $c$ is uniform random, regardless of the plaintext vector $\vec{m}$.  This shows that \CDGHV\ is a lossy encryption scheme, and the semantic security directly follows from that.\qed
+Now, when we choose $x_i$ from the lossy public key $\pk'$, $x_i$ are
+uniform on $\Z\cap[0,x_0)$, and we may use the Leftover Hash Lemma.
+  In fact we may use the simplified version shown in Lemma~1
+  of~\cite{vDGHV2010} to conclude that the distribution of
+  $[\sum_{i=1}^\tau b_i\cdot x_i]_{x_0}$ is statistically close to the
+  uniform distribution on $\Z\cap[0,x_0)$, when the parameters are
+    chosen according to Section~\ref{parameter}.  Therefore, the
+    distribution of $c$ is uniformly random, regardless of the plaintext
+    vector $\vec{m}$.  This shows that \CDGHV\ is a lossy encryption
+    scheme, and the semantic security directly follows from that.\qed 
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -583,8 +596,11 @@ construct a \lDACD\  challenge $z'$ such that
 \begin{equation*}
 z'=\crt_{x_0,(p_i)_{i\neq i_0}}(z,r_{0}'Q_0,\dots,r_{i_0-1}'Q_{i_0-1},e_{i_0+1}',\dots,e_{\ell-1}') 
 \end{equation*}
-where $r_i'\gets\Z\cap (-2^\rho,2^\rho)$ and $e_i'\gets\Z\cap[0,p_i)$. By the hybrid argument, it can be shown that $\lDACD$ distinguisher can be efficiently converted to a $\DACD$ distinguisher. This terminates the proof of Lemma~\ref{le:redsec}.
-
+where $r_i'\gets\Z\cap (-2^\rho,2^\rho)$ and
+$e_i'\gets\Z\cap[0,p_i)$. By the hybrid argument, it can be shown that
+  any $\lDACD$ distinguisher can be efficiently converted to a $\DACD$
+  distinguisher. This terminates the proof of Lemma~\ref{le:redsec}. 
+\qed
 \end{proof}
 \begin{corollary}
 The \CDGHV \ scheme is semantically secure under the
@@ -595,13 +611,14 @@ decisional approximate GCD assumption.
 Secure integer arithmetic is one of the most important applications of homomorphic encryption schemes. 
 It includes frequently used statistical functions such as mean, standard deviation, logistical regression, and secure evaluation of a multivariate function over the integers.
 Some applications may require very large integer inputs in the computation of these functions. 
-For the homomorphic computation of these functions, one may use FHEs. 
+For the homomorphic computation of these functions, one may use FHE
+supporting homomorphic bit operations. 
 However, the large ciphertext expansion and rather high cost of bootstrapping make this cumbersome and inefficient. 
 %Also SWHE on small message space can not be efficient since it requires a large depth for integer operations. 
 In fact, even an addition of two $\lambda$-bit integers using bit operations needs computing degree-$O(\lambda)$ polynomial over $\Z_2$ due to the carry computation. 
 For this reason, it is very important to construct an efficient somewhat homomorphic scheme supporting large integer arithmetic on encrypted data. 
 
-As is mentioned earlier in this section, $\CDGHV$ scheme supports arithmetic operations
+As mentioned earlier in this section, $\CDGHV$ scheme supports arithmetic operations
 on $\Z_Q$ with $Q=Q_0\cdots Q_{\ell-1}$ when all $Q_i$'s are pairwise coprime.
 We can freely choose $\ell$ up to $\Ot{\lambda^3}$ depending on the applications.
 And the advantage of our scheme in the overhead stands out, as the plaintext space gets larger. 
@@ -637,6 +654,13 @@ Approximate-GCD assumption from Definition~\ref{def:approxGCD}.
 However we can only show its security under the
 (stronger) Error-Free Approximate-GCD assumption already considered
 in~\cite{vDGHV2010,CMNT2011,CNT2012}. 
+For two specific
+integers $p$ and $q_0$, we use the following distribution over
+$\gamma$-bit integers:  
+\[ \D_\rho(p,q_0) = \left\{ \Choose q\gets [0, q_0),
+  r\gets \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
+  \right\}. \] 
+
 \begin{definition}[Error-free approximate GCD] 
 The $(\rho, \eta,{\gamma})$-error-free Ap\-pro\-xi\-ma\-te-GCD pro\-blem
 is: For a random $\eta$-bit prime $p$, given $y_0=q_0\cdot p$
@@ -661,10 +685,10 @@ randomize the ciphertext modulo $p$.
 However in the batch scheme it would not be sufficient to add such
 random term $2r$; namely the \emph{same} random
  $2r=2r \bmod p_i$ would be added 
-modulo each of the $p_i$, whereas for the security proof to go through
+modulo each of the $p_i$'s, whereas for the security proof to go through
 these random terms should be independently distributed modulo each of the
 $p_i$'s. Therefore a new technique is required to extend DGHV to
-a semantically secure batch encryption scheme, whose security is based
+a semantically secure batch encryption scheme, whose security can be based
 on the Error-Free Approximate-GCD problem. 
 
 %\paragraph{Variant of the DGHV Scheme.} 
@@ -705,7 +729,7 @@ c = \Big[m + 2b \cdot \varPi+
   2\sum\limits_{i\in S} x_i\Big]_{x_0}
 \end{equation}
 for some large random integer $b$. Modulo $p$ this gives a new integer
-$r''=r' + b \cdot \varpi$; we argue that this enables to proceed as if
+$r''=r' + b \cdot \varpi$, and we argue that this enables to proceed as if
 $r'$ was actually reduced modulo $\varpi$. Namely, if we generate the
 $r_i$'s such that the sum $r'=\sum_{i \in S} r_i$ is not much larger than
 $\varpi$, then reducing $r'$ modulo $\varpi$ would just subtract a
@@ -722,7 +746,8 @@ $\varPi$, we use a subset sum of $\ell$ such multiples $\varPi_i$, where
 $\varPi_i \bmod p_j=\varpi_{i,j}$. The Leftover Hash Lemma is then
 applied modulo the lattice generated by the $\varpi_{i,j}$. This shows
 that the random noise values modulo the $p_i$'s follow essentially
-independent distributions, and eventually leads to a security proof based on the Error-Free Approximate-GCD problem. 
+independent distributions, and eventually leads to a security proof
+based on the  Error-Free Approximate-GCD problem above.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}\label{subsec:description}
@@ -754,6 +779,7 @@ $$
 with $r_{i,j}\leftarrow\Z\cap(-2^{\rho'-1}, 2^{\rho'-1})$ and $r'_{i,j}, \varpi_{i,j}\leftarrow\Z\cap(-2^{\rho}, 2^{\rho})$. Finally, let 
 $$\pk = \left\{ x_0, \left(x_i\right)_{1\leq i\leq \tau}, \left(x'_i\right)_{0\leq i\leq \ell-1}, \left(\varPi_i\right)_{0\leq i\leq {\ell-1}}\right\}$$
 and $\sk=(p_j)_{0\leq j\leq {\ell-1}}$.
+\smallskip
 
 \item[$\BDGHV.\Encrypt(\pk, \vec{m} \in \{0,1\}^\ell)$.] Choose 
   random integer vectors $\vec b=(b_i)%_{1\leq i\leq \tau}
@@ -1047,9 +1073,8 @@ Instead we show how to perform  such $\Permute$ at ciphertext refresh
 time, \ie when performing a  $\Recrypt$.
 This feature is therefore supported at no extra cost assuming a
 ciphertext refresh operation has to be carried out anyway (\ie after each
-$\Mult$ gate). Notice that independently, a similar technique was
-described
-in~\cite{BGH2013}.
+$\Mult$ gate). Notice that  a similar technique was independently
+described in~\cite{BGH2013}
 for the RLWE-based fully homomorphic schemes~\cite{BV2011a,BV2011b,GHS2012a}.
 
 
@@ -1088,7 +1113,7 @@ $6 \cdot (2 \log_2 \ell-1)$ recryptions.
 In practice, however, the circuit to be homomorphically evaluated is
 likely to be known in advance, so it is possible to put a set of
 distinguished permutations in the public key that provides an optimal
-time-memory tradeoff. In the next section, we describe two variants of
+time-memory trade-off. In the next section, we describe two variants of
 homomorphic evaluations of the full AES circuit that require respectively only
 \emph{four} permutations and no permutation
 at all.
@@ -1179,8 +1204,8 @@ $\pk_{\FHE}$.
 
 
 We consider our $\BDGHV$ scheme with $\ell$ slots. We describe two
-variants of our implementation which we call \emph{\bwbs} and
-\emph{\swbs}.
+variants of our implementation which we call \emph{\bwbs}and
+\emph{\swbs}\!\!.
 
 \paragraph{Byte-Wise Bitslicing.} In this representation, the
 $16$-byte AES state is viewed as a matrix of $16$ rows of $8$ bits
@@ -1383,7 +1408,7 @@ yields  better relative times.
 
 Our timings are comparable to~\cite{GHS2012c} for the RLWE-based scheme, where a relative time of $5$ minutes per block is
 reported; the authors used a $24$-core server with 256GB of RAM, while
-our program runs on a more modest desktop computer with 4 hyperthreaded cores and
+our program runs on a more modest desktop computer with 4 hyper-threaded cores and
 32GB of RAM (the whole public key fits in RAM).
 We claim a slightly lower security level, however: $72$ bits versus $80$
 bits for the implementation from~\cite{GHS2012c}.
