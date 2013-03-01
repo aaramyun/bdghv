@@ -360,7 +360,7 @@ The scheme is semantically secure under the Approximate-GCD assumption
 \begin{definition}[Approximate GCD]
 \label{def:approxGCD}
  The 
-  $(\rho,\eta,\gamma)$-Approximate-GCD problem consists, given a random $ \eta $-bit odd integer $ p $ and
+  $(\rho,\eta,\gamma)$-approximate GCD problem consists, given a random $ \eta $-bit odd integer $ p $ and
   given  polynomially many samples from $ \mathcal{D}_{\gamma,\rho}(p) $, in outputting $p$.
 \end{definition}
 
@@ -398,7 +398,7 @@ This scheme can be considered as encrypting vectors $(m_0, \dots,
 m_{\ell-1})$ and supporting parallel, componentwise
 additions and multiplications.  Or, if we choose the $Q_i$'s to be pairwise coprime, then using the isomorphism 
 $\Z_{\prod\!Q_i}\cong\prod\Z_{Q_i}$, we may regard this as a somewhat homomorphic encryption supporting arithmetic operations
-on $\Z_Q$, with $Q=Q_0\cdots Q_{\ell-1}$.
+on $\Z_Q$, with $Q=\prod {Q_i}$.
 
 In order to allow public-key encryption, we provide integers $x'_i$ and $x_i$ in the public key, such that $x'_i\bmod{p_j}=Q_{j}r'_{i,j}+\delta_{i,j}$, and $x_i\bmod{p_j}=Q_{j}r_{i,j}$ for all $i$, $j$ where $\delta_{i,j}$ is the Kronecker delta. Then, a plaintext vector $\vec{m}=(m_0, \dots, m_{\ell-1})$ is encrypted as follows:
 \[
@@ -469,9 +469,9 @@ The parameters should satisfy the following constraints:
 \begin{itemize}
 \renewcommand{\labelitemi}{\tiny $\bullet$}
 \itemsep.4em
-\item $\rho=\tilde{\mathcal{O}}(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
+\item $\rho =\tilde\Omega(\lambda)$, to be secure against Chen-Nguyen's attack~\cite{CN2012} and Howgrave-Graham's attack~\cite{How2001},
 \item $\eta=\tilde{\Omega}(\lambda^2 +\rho\cdot \lambda)$, to resist the factoring attack using the elliptic curve method~\cite{Len1987}, and to permit enough multiplicative depth,
-\item $\gamma=\eta^2\omega(\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
+\item $\gamma=\omega(\eta^2\log \lambda)$, to resist Cohn and Heninger's attack~\cite{CH2011} and the attack using Lagarias algorithm~\cite{Lag1985} on the approximate GCD problem,
 \item $\tau=\gamma+\omega(\log\lambda)$, in order to use leftover
   hash lemma (see Section~\ref{reduce_acd}).
 \end{itemize}
@@ -490,7 +490,7 @@ new assumption called $\ell$-$\mathbf{DACD}_Q$.  In fact, this rather
 complicated assumption is given only as an intermediate step for the
 proof, and in Section~\ref{decisional_assumption}, we prove this
 assumption from a simpler decisional assumption, called the Decisional 
-Approximate GCD Assumption ($\mathbf{DACD}$).  So the security of our scheme
+Approximate GCD assumption ($\mathbf{DACD}$).  So the security of our scheme
 is eventually based on this assumption.
 
 Given two integer vectors $\vec{p}=(p_0, \dots, p_{\ell-1})$, $\vec{Q}=(Q_0, \dots, Q_{\ell-1})$ of length $\ell$ and an integer $q_0$, let us define the distribution $\D_\rho(\vec{p}; \vec{Q}; q_0)$ as follows.  The output of the distribution is
@@ -563,7 +563,7 @@ simpler decisional assumption with a single prime $p$.
  For two specific
 integers $p$ and $q_0$, we use the following distribution over
 $\gamma$-bit integers:  
-\[ \D_\rho(p,q_0) = \left\{ \Choose q\gets [0, q_0),
+\[ \D_\rho(p,q_0) := \left\{ \Choose q\gets [0, q_0),
   r\gets \Z\cap (-2^\rho, 2^\rho) : \Output y=q\cdot p+r
   \right\}. \] 
 
@@ -619,7 +619,7 @@ In fact, even an addition of two $\lambda$-bit integers using bit operations nee
 For this reason, it is very important to construct an efficient somewhat homomorphic scheme supporting large integer arithmetic on encrypted data. 
 
 As mentioned earlier in this section, $\CDGHV$ scheme supports arithmetic operations
-on $\Z_Q$ with $Q=Q_0\cdots Q_{\ell-1}$ when all $Q_i$'s are pairwise coprime.
+on $\Z_Q$ with $Q=\prod_{i=0}^{\ell-1} Q_i$ when all $Q_i$'s are pairwise coprime.
 We can freely choose $\ell$ up to $\Ot{\lambda^3}$ depending on the applications.
 And the advantage of our scheme in the overhead stands out, as the plaintext space gets larger. 
 
@@ -662,7 +662,7 @@ $\gamma$-bit integers:
   \right\}. \] 
 
 \begin{definition}[Error-free approximate GCD] 
-The $(\rho, \eta,{\gamma})$-error-free Ap\-pro\-xi\-ma\-te-GCD pro\-blem
+The $(\rho, \eta,{\gamma})$-error-free ap\-pro\-xi\-ma\-te-GCD pro\-blem
 is: For a random $\eta$-bit prime $p$, given $y_0=q_0\cdot p$
 where $q_0$ is a random integer in $[0,
   2^{\gamma}/p)$, and polynomially many samples from $\mathcal
@@ -914,7 +914,7 @@ problem is hard, she cannot have a non-negligible advantage against the scheme.\
 
 \begin{lemma}
 \label{l:redsec}
-The oracle-$\ell$-decisional-Approximate-GCD problem is hard if the
+The oracle-$\ell$-decisional-approximate-GCD problem is hard if the
 error-free-approximate-GCD problem is hard.
 \end{lemma}
 
@@ -1195,7 +1195,7 @@ optimize the communication cost in cloud-based
 applications. Indeed, since the ciphertext expansion ratio in most
 fully-homomorphic encryption schemes is huge, data can rather be sent
 encrypted under AES with a ciphertext expansion equal to $1$, along
-with the public key $\pk_{\FHE}$ of the FHE scheme scheme as well as
+with the public key $\pk_{\FHE}$ of the FHE scheme as well as
 the AES secret-key 
 encrypted under $\pk_{\FHE}$. Then, before the cloud performs homomorphic operations
 on the data, it can first run the AES decryption algorithm
@@ -1221,7 +1221,7 @@ Thus, $\vec m_0$ represents the LSBs
   of the AES states of the $k$ AES-plaintexts, and $\vec m_7$ the
   MSBs. This construction is similar to general-purpose
   bitslicing~\cite{Bih1997,KS2009}.} We briefly
-describe how to implement the AES stages; full detail 
+describe how to implement the AES stages; full details 
 on the implementation are given in~\cite{CLT2013a}. 
 
 \begin{figure}[bt]
